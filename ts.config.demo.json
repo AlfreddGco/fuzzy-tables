@@ -1,8 +1,21 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "noEmit": true
+    "composite": true,
+    "jsx": "react-jsx",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "paths": {
+      "fuzzy-tables": ["./src"],
+      "fuzzy-tables/*": ["./src/*"]
+    }
   },
-  "include": ["demo"],
-  "references": [{ "path": "." }]
-}
+  "include": ["demo/src/**/*", "src/**/*"],
+  "references": [
+    {
+      "path": "./tsconfig.json"
+    }
+  ]
+} 

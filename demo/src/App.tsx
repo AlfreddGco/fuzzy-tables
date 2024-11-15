@@ -1,6 +1,5 @@
 import React from 'react';
-import { buildTable } from '../../src/components/Table/index';
-// import { buildTable } from 'fuzzy-tables'; // When published
+import { buildTable } from 'fuzzy-tables';
 
 const DEMO_DATA = [
   {
