@@ -34,16 +34,16 @@ const DEMO_DATA = [
   }
 ];
 
-const TableDemo: React.FC = () => {
-  // Basic Table Example
-  const BasicTable = buildTable(['name', 'email', 'status']);
-  
-  // Advanced Table with all field types
-  const AdvancedTable = buildTable(
-    ['name', 'email', 'status', 'tags', 'lastLogin', 'isVerified', 'metadata'],
-    ['edit', 'delete']
-  );
+// Basic Table Example
+const BasicTable = buildTable(['name', 'email', 'status']);
 
+// Advanced Table with all field types
+const AdvancedTable = buildTable(
+  ['name', 'email', 'status', 'tags', 'lastLogin', 'isVerified', 'metadata'],
+  ['edit', 'delete']
+);
+
+const TableDemo: React.FC = () => {
   return (
     <div className="space-y-8 p-4">
       <div>

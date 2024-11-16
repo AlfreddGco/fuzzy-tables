@@ -198,15 +198,14 @@ export const buildTable = (fields: string[], handlers: string[] = []): ComposedT
       <StyledTable className="w-full overflow-auto relative">
         <thead>
           <tr>
-            <th className="p-2 pointer">
-              <input type="checkbox" className="pointer"
-                checked={isAllSelected}
-                onChange={() => {
-                  data.forEach((row) => {
-                    setRowSelection(row._id, !isAllSelected)
-                  })
-                }}
-              />
+            <th className="p-2 pointer"
+              onClick={() => {
+                data.forEach((row) => {
+                  setRowSelection(row._id, !isAllSelected)
+                })
+              }}
+            >
+              <input type="checkbox" className="pointer" checked={isAllSelected} />
             </th>
             {fields.map((field) => (
               <TableHeader key={field} field={field}
