@@ -4,45 +4,9 @@ import {
   StyledTable, TableHeader, TableHandler, RowErrorBoundary
 } from './specifics'
 import { create, StoreApi, UseBoundStore } from 'zustand'
-
-const rainbow = [
-  {
-    strong: 'rgb(91, 89, 190)',//purple
-    hex: '#5B59BE',
-    alpha: (v: number) => `rgba(91, 89, 190, ${v})`,
-    light: '#eeeef9',
-  },
-  {
-    strong: 'rgb(191, 90, 90)',//red
-    hex: '#BF5A5A',
-    alpha: (v: number) => `rgba(191, 90, 90, ${v})`,
-    light: '#f8eeee',
-  },
-  {
-    strong: 'rgb(149, 166, 70)',//orbit green
-    hex: ' #95A646',
-    alpha: (v: number) => `rgba(149, 166, 70, ${v})`,
-    light: '#f5f6ed',
-  },
-  {
-    strong: 'rgb(89, 173, 190)',//blue
-    hex: '#59ADBE',
-    alpha: (v: number) => `rgba(89, 173, 190, ${v})`,
-    light: '#e0edef',
-  },
-  {
-    strong: 'rgb(255, 145, 64)', // orange
-    hex: '#ff9140',
-    alpha: (v: number) => `rgba(255, 145, 64, ${v})`,
-    light: '#ffd5b8',
-  },
-  {
-    strong: 'rgb(0, 167, 47)',//lemon green
-    hex: '#00A72F',
-    alpha: (v: number) => `rgba(0, 167, 47, ${v})`,
-    light: '#ebf6eb',
-  },
-]
+import {
+  headerNameFromField, inferTypeFromValue, rainbow
+} from '../../utils'
 
 type SortingField = {
   field: string
@@ -60,26 +24,8 @@ type TableStore = {
   removeListener: (handler: string) => void
 }
 
-type ValueType = 'date' | 'undefined' | 'boolean' | 'object[]' | 'string[]' | 'string'
-
-const inferTypeFromValue = (value: any): ValueType => {
-  const dateRegex = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d{3})?Z?)?$/;
-  if (typeof value === 'string' && dateRegex.test(value)) {
-    return 'date'
-  }
-  if (value === undefined) return 'undefined'
-  if (value === 'true' || value === true) return 'boolean'
-  if (value === 'false' || value === false) return 'boolean'
-  if (Array.isArray(value) && value.length > 0 && value.some(v => typeof v === 'object' && v !== null)) {
-    return 'object[]'
-  }
-  if(Array.isArray(value)) {
-    return 'string[]'
-  }
-  return 'string'
-}
-
-const renderField = (value: any): React.ReactNode => {
+const renderField = (row: TableRow, field: string): React.ReactNode => {
+  const value = _.get(row, field)
   const type = inferTypeFromValue(value)
   if (type === 'date') {
     const DATE_CONFIG: Intl.DateTimeFormatOptions = { month: '2-digit', day: '2-digit', year: 'numeric' };
@@ -126,7 +72,38 @@ interface ComposedTableComponent extends React.FC<TableProps> {
   useTableStore: UseBoundStore<StoreApi<TableStore>>
 }
 
-export const buildTable = (fields: string[], handlers: string[] = []): ComposedTableComponent => {
+type Fields = string[] |
+  {
+    header: string,
+    field: string,
+    render?: (row: TableRow) => React.ReactNode
+  }[]
+
+type FullDescriptionField = {
+  header: string,
+  field: string,
+  render: (row: TableRow) => React.ReactNode
+}
+
+export const buildTable = (fields: Fields, handlers: string[] = []): ComposedTableComponent => {
+  const fieldsArray: FullDescriptionField[] = function(){
+    // Array of strings
+    if(Array.isArray(fields) && fields.every((field) => typeof field === 'string')){
+      return fields.map((field) => ({
+        header: headerNameFromField(field),
+        field,
+        render: (row: TableRow) => renderField(row, field)
+      }))
+    }else if(Array.isArray(fields) && fields.every((field) => typeof field === 'object' && 'header' in field && 'field' in field)){
+      // Array of {header,field,render}
+      return fields.map(field => ({
+        ...field,
+        render: field.render || ((row: TableRow) => renderField(row, field.field))
+      }))
+    }
+    throw new Error('Invalid fields type')
+  }()
+
   const useTableStore = create<TableStore>((set, get) => ({
     rowSelection: {},
     toggleRowSelection: (rowId) => {
@@ -207,8 +184,10 @@ export const buildTable = (fields: string[], handlers: string[] = []): ComposedT
             >
               <input type="checkbox" className="pointer" checked={isAllSelected} />
             </th>
-            {fields.map((field) => (
-              <TableHeader key={field} field={field}
+            {fieldsArray.map(({ header, field }) => (
+              <TableHeader key={field}
+                headerName={header}
+                field={field}
                 sortingFields={sortingFields}
                 toggleSortingField={toggleSortingField}
               />
@@ -228,11 +207,11 @@ export const buildTable = (fields: string[], handlers: string[] = []): ComposedT
                     checked={rowSelection[row._id]}
                   />
                 </td>
-                {fields.map((field) => (
+                {fieldsArray.map(({ field, render }) => (
                   <td key={field} className="py-3 px-2"
                     data-type={inferTypeFromValue(row[field])}
                   >
-                    {renderField(_.get(row, field))}
+                    {render(row)}
                   </td>
                 ))}
                 {handlers.length > 0 && (

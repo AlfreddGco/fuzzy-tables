@@ -40,7 +40,7 @@ const BasicTable = buildTable(['name', 'email', 'status']);
 // Advanced Table with all field types
 const AdvancedTable = buildTable(
   ['name', 'email', 'status', 'tags', 'lastLogin', 'isVerified', 'metadata'],
-  ['edit', 'delete']
+  ['Edit', 'Delete']
 );
 
 const TableDemo: React.FC = () => {

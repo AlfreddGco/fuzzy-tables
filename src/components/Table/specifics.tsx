@@ -1,6 +1,6 @@
 import React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import _ from 'lodash'
+import { headerNameFromField } from '../../utils'
 
 import { 
   DropdownMenu,
@@ -25,24 +25,17 @@ interface TableHeaderProps {
   field: string
   sortingFields: SortingField[]
   toggleSortingField: (field: string) => void
+  headerName?: string
 }
 
-export const TableHeader: React.FC<TableHeaderProps> = ({ field, sortingFields, toggleSortingField }) => {
+export const TableHeader: React.FC<TableHeaderProps> = ({ headerName, field, sortingFields, toggleSortingField }) => {
   const sortingField = sortingFields.find((f) => f.field === field)
-  
-  const prettify = (columnName: string): string => {
-    if(columnName[0] === columnName[0].toLowerCase() || columnName.includes('_')) {
-      return _.startCase(columnName.replace('_', ' '))
-    }
-    return columnName
-  }
-
   return (
     <th key={field} className="p-2 text-left text-[rgba(0,0,0,0.5)]"
       onClick={() => toggleSortingField(field)}
     >
-      <div className="flex-sb-c gap-1">
-        <span>{prettify(field)}</span>
+      <div className="flex items-center justify-between gap-1">
+        <span>{headerName || headerNameFromField(field)}</span>
         {sortingField && (
           sortingField.direction === 'asc' ? <ArrowUpIcon /> : <ArrowDownIcon />
         )}
@@ -125,10 +118,10 @@ interface TableHandlerProps {
 export const TableHandler: React.FC<TableHandlerProps> = ({ handlers, onHandlerClick }) => {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger asChild className='w-full h-full'>
         <button 
           onClick={(e: React.MouseEvent) => e.stopPropagation()}
-          className="p-1 hover:bg-gray-100 rounded-full bg-white"
+          className="p-1 hover:bg-gray-100 bg-white"
         >
           <DotsHorizontalIcon />
         </button>
