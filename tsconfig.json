@@ -8,10 +8,10 @@
     "outDir": "dist",
     "strict": true,
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
+    "allowImportingTsExtensions": false,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
+    "noEmit": false,
     "skipLibCheck": true
   },
   "include": ["src"],

@@ -11,7 +11,8 @@
   "scripts": {
     "build": "tsc",
     "dev": "vite demo",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "types": "tsc --emitDeclarationOnly"
   },
   "keywords": [
     "react",
@@ -35,6 +36,7 @@
     "react-error-boundary": "^4.1.2",
     "styled-components": "^6.1.13",
     "tailwind-merge": "^2.5.4",
+    "zod": "^3.23.8",
     "zustand": "^5.0.1"
   },
   "devDependencies": {
@@ -46,6 +48,7 @@
     "autoprefixer": "^10.4.14",
     "postcss": "^8.4.27",
     "tailwindcss": "^3.3.3",
+    "tsup": "^8.3.5",
     "typescript": "^5.6.3",
     "vite": "^5.4.11"
   }
