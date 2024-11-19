@@ -1,12 +1,15 @@
 import React, { useEffect } from 'react'
+import { create, StoreApi, UseBoundStore } from 'zustand'
+import {
+  ZodArray, ZodBoolean, ZodDate, ZodEnum, ZodObject
+} from 'zod'
 import _ from 'lodash'
+
 import {
   StyledTable, TableHeader, TableHandler, RowErrorBoundary
 } from './specifics'
-import { create, StoreApi, UseBoundStore } from 'zustand'
-import {
-  headerNameFromField, inferTypeFromValue, rainbow
-} from '../../utils'
+import { FieldType, inferTypeFromValue } from '../../fields'
+import { headerNameFromField, rainbow } from '../../utils'
 
 type SortingField = {
   field: string
@@ -24,21 +27,36 @@ type TableStore = {
   removeListener: (handler: string) => void
 }
 
-const renderField = (row: TableRow, field: string): React.ReactNode => {
+const renderField = (row: TableRow, field: string, type?: string): React.ReactNode => {
   const value = _.get(row, field)
-  const type = inferTypeFromValue(value)
-  if (type === 'date') {
+  if(!type){
+    type = inferTypeFromValue(value)
+  }
+  if (type === FieldType.Date) {
     const DATE_CONFIG: Intl.DateTimeFormatOptions = { month: '2-digit', day: '2-digit', year: 'numeric' };
     return new Date(value).toLocaleDateString('en-US', DATE_CONFIG);
   }
-  if (type === 'undefined') return '-';
-  if (type === 'boolean') {
+  if (type === FieldType.Undefined) return '-';
+  if (type === FieldType.Checkbox) {
     return value ? '✅' : '❌';
   }
-  if (type === 'object[]') {
+  if (type === FieldType.ObjectArray) {
     return JSON.stringify(value)
   }
-  if (type === 'string[]') {
+  if(type === FieldType.SingleSelect){
+    return (
+      <span className="rounded-md px-2 py-0.5 text-sm"
+        style={{
+          backgroundColor: rainbow[value.length % rainbow.length].alpha(0.8),
+          color: 'white',
+          fontWeight: '500',
+        }}
+      >
+        {value}
+      </span>
+    )
+  }
+  if (type === FieldType.MultipleSelect) {
     const chips = value as string[];
     return chips.map((chip, idx) => (
       <span key={chip} className="rounded-md px-2 py-0.5 text-sm"
@@ -77,7 +95,7 @@ type Fields = string[] |
     header: string,
     field: string,
     render?: (row: TableRow) => React.ReactNode
-  }[]
+  }[] | ZodObject<any, any>[]
 
 type FullDescriptionField = {
   header: string,
@@ -87,6 +105,28 @@ type FullDescriptionField = {
 
 export const buildTable = (fields: Fields, handlers: string[] = []): ComposedTableComponent => {
   const fieldsArray: FullDescriptionField[] = function(){
+    if(fields instanceof ZodObject){
+      const object = fields
+      return Object.entries(object.shape).map(([key, field]) => {
+        let type = FieldType.SingleLine
+        if(field instanceof ZodEnum){
+          type = FieldType.SingleSelect
+        }else if(field instanceof ZodArray){
+          type = FieldType.MultipleSelect
+        } else if(field instanceof ZodDate){
+          type = FieldType.Date
+        }else if(field instanceof ZodBoolean){
+          type = FieldType.Checkbox
+        }else if(field instanceof ZodObject){
+          type = FieldType.ObjectArray
+        }
+        return {
+          header: headerNameFromField(key),
+          field: key,
+          render: (row: TableRow) => renderField(row, key, type)
+        }
+      })
+    }
     // Array of strings
     if(Array.isArray(fields) && fields.every((field) => typeof field === 'string')){
       return fields.map((field) => ({

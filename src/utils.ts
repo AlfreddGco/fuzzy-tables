@@ -45,22 +45,3 @@ export const headerNameFromField = (columnName: string): string => {
   }
   return columnName
 }
-
-type ValueType = 'date' | 'undefined' | 'boolean' | 'object[]' | 'string[]' | 'string'
-
-export const inferTypeFromValue = (value: any): ValueType => {
-  const dateRegex = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d{3})?Z?)?$/;
-  if (typeof value === 'string' && dateRegex.test(value)) {
-    return 'date'
-  }
-  if (value === undefined) return 'undefined'
-  if (value === 'true' || value === true) return 'boolean'
-  if (value === 'false' || value === false) return 'boolean'
-  if (Array.isArray(value) && value.length > 0 && value.some(v => typeof v === 'object' && v !== null)) {
-    return 'object[]'
-  }
-  if(Array.isArray(value)) {
-    return 'string[]'
-  }
-  return 'string'
-}

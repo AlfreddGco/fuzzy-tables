@@ -47,6 +47,27 @@ const Table = buildTable([
 ])
 ```
 
+### 3. From Zod Object
+
+You can also build a table from a Zod object. Fuzzy Tables will automatically infer the type of each field and render it accordingly as single line, date, checkbox, multiple select, single select, or object array.
+
+```tsx
+import { z } from 'zod'
+const Table = buildTable(z.object({
+  _id: z.string(),
+  name: z.string(),
+  email: z.string().email(),
+  status: z.enum(['active', 'inactive']),
+  tags: z.array(z.string()),
+  lastLogin: z.date(),
+  isVerified: z.boolean(),
+  metadata: z.object({
+    role: z.string(),
+    level: z.number(),
+  }),
+}))
+```
+
 ## Hooks
 
 Fuzzy Tables provides several custom hooks for advanced table manipulation:
@@ -165,45 +186,6 @@ function UserManagement() {
         Current Sort: {sortingFields.map(f => `${f.field} ${f.direction}`).join(', ')}
       </div>
     </div>
-  );
-}
-```
-
-## Full Example
-
-```tsx
-import { buildTable } from 'fuzzy-tables';
-
-const UserTable = buildTable([
-  {
-    header: 'Name',
-    field: 'name',
-    sortable: true,
-    width: '30%',
-  },
-  {
-    header: 'Email',
-    field: 'email',
-    render: (row) => <a href={`mailto:${row.email}`}>{row.email}</a>,
-  },
-  {
-    header: 'Status',
-    field: 'status',
-    render: (row) => <StatusBadge status={row.status} />,
-    filterable: true,
-    align: 'center',
-  },
-]);
-
-function App() {
-  return (
-    <UserTable
-      data={users}
-      selectable
-      pagination={{ pageSize: 10 }}
-      onSelectionChange={handleSelection}
-      className="shadow-lg"
-    />
   );
 }
 ```

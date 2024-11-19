@@ -8,7 +8,7 @@ const DEMO_DATA = [
     email: 'john@example.com',
     status: 'active',
     tags: ['developer', 'frontend'],
-    lastLogin: '2024-03-15T10:30:00Z',
+    lastLogin: new Date('2024-03-15T10:30:00Z'),
     isVerified: true,
     metadata: { role: 'admin', level: 3 }
   },
@@ -18,7 +18,7 @@ const DEMO_DATA = [
     email: 'jane@example.com',
     status: 'inactive',
     tags: ['designer', 'ui/ux'],
-    lastLogin: '2024-03-14T15:45:00Z',
+    lastLogin: new Date('2024-03-14T15:45:00Z'),
     isVerified: false,
     metadata: { role: 'user', level: 2 }
   },
@@ -28,7 +28,7 @@ const DEMO_DATA = [
     email: 'bob@example.com',
     status: 'active',
     tags: ['developer', 'backend'],
-    lastLogin: '2024-03-16T09:15:00Z',
+    lastLogin: new Date('2024-03-16T09:15:00Z'),
     isVerified: true,
     metadata: { role: 'admin', level: 4 }
   }
@@ -42,6 +42,21 @@ const AdvancedTable = buildTable(
   ['name', 'email', 'status', 'tags', 'lastLogin', 'isVerified', 'metadata'],
   ['Edit', 'Delete']
 );
+
+import { z } from 'zod'
+const FromZodObject = buildTable(z.object({
+  _id: z.string(),
+  name: z.string(),
+  email: z.string().email(),
+  status: z.enum(['active', 'inactive']),
+  tags: z.array(z.string()),
+  lastLogin: z.date(),
+  isVerified: z.boolean(),
+  metadata: z.object({
+    role: z.string(),
+    level: z.number(),
+  }),
+}))
 
 const TableDemo: React.FC = () => {
   return (
@@ -57,6 +72,11 @@ const TableDemo: React.FC = () => {
           Demonstrates all supported field types and row handlers
         </p>
         <AdvancedTable data={DEMO_DATA} />
+      </div>
+
+      <div>
+        <h2 className="text-xl font-bold mb-4">From Zod Object</h2>
+        <FromZodObject data={DEMO_DATA} />
       </div>
 
       <div className="text-sm space-y-2">
