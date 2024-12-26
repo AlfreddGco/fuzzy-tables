@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { headerNameFromField } from "../../utils";
