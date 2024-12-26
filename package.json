@@ -1,17 +1,25 @@
 {
 	"name": "fuzzy-tables",
-	"version": "0.2.2",
+	"version": "0.2.3",
 	"description": "A modern React component library for fuzzy tables",
 	"main": "dist/index.js",
 	"module": "dist/index.mjs",
 	"types": "dist/index.d.ts",
-	"files": ["dist"],
+	"files": [
+		"dist"
+	],
 	"scripts": {
 		"build": "tsup",
 		"dev": "vite demo",
 		"prepublishOnly": "npm run build"
 	},
-	"keywords": ["react", "table", "component", "fuzzy-search", "typescript"],
+	"keywords": [
+		"react",
+		"table",
+		"component",
+		"fuzzy-search",
+		"typescript"
+	],
 	"author": "Your Name",
 	"license": "MIT",
 	"peerDependencies": {
