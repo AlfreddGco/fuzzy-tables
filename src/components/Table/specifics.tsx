@@ -68,13 +68,12 @@ export const RowErrorBoundary: React.FC<RowErrorBoundaryProps> = ({
 	return <ErrorBoundary fallback={<div>Error</div>}>{children}</ErrorBoundary>;
 };
 
-import styles from "./specifics.module.scss";
 export const StyledTable = ({
 	className = "",
 	...props
-}: React.HTMLAttributes<HTMLTableElement>) => (
-	<table {...props} className={`${styles.table} ${className}`} />
-);
+}: React.HTMLAttributes<HTMLTableElement>) => {
+	return <table {...props} className={`fuzzy-table ${className}`} />;
+};
 
 interface TableHandlerProps {
 	handlers: string[];
