@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect } from "react";
 import { create, StoreApi, UseBoundStore } from "zustand";
 import { ZodArray, ZodBoolean, ZodDate, ZodEnum, ZodObject } from "zod";
