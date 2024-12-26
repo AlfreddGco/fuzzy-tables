@@ -40,6 +40,11 @@ export const TableHeader: React.FC<TableHeaderProps> = ({
 			key={field}
 			className="p-2 text-left text-[rgba(0,0,0,0.5)]"
 			onClick={() => toggleSortingField(field)}
+			onKeyDown={(e) => {
+				if (e.key === "Enter") {
+					toggleSortingField(field);
+				}
+			}}
 		>
 			<div className="flex items-center justify-between gap-1">
 				<span>{headerName || headerNameFromField(field)}</span>
@@ -133,6 +138,7 @@ export const TableHandler: React.FC<TableHandlerProps> = ({
 				<button
 					onClick={(e: React.MouseEvent) => e.stopPropagation()}
 					className="p-1 hover:bg-gray-100 bg-white"
+					type="button"
 				>
 					<DotsHorizontalIcon />
 				</button>

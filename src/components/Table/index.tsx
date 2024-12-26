@@ -35,10 +35,11 @@ const renderField = (
 	type?: string,
 ): React.ReactNode => {
 	const value = _.get(row, field);
-	if (!type) {
-		type = inferTypeFromValue(value);
+	let _type = type;
+	if (!_type) {
+		_type = inferTypeFromValue(value);
 	}
-	if (type === FieldType.Date) {
+	if (_type === FieldType.Date) {
 		const DATE_CONFIG: Intl.DateTimeFormatOptions = {
 			month: "2-digit",
 			day: "2-digit",
@@ -46,14 +47,14 @@ const renderField = (
 		};
 		return new Date(value).toLocaleDateString("en-US", DATE_CONFIG);
 	}
-	if (type === FieldType.Undefined) return "-";
-	if (type === FieldType.Checkbox) {
+	if (_type === FieldType.Undefined) return "-";
+	if (_type === FieldType.Checkbox) {
 		return value ? "✅" : "❌";
 	}
-	if (type === FieldType.ObjectArray) {
+	if (_type === FieldType.ObjectArray) {
 		return JSON.stringify(value);
 	}
-	if (type === FieldType.SingleSelect) {
+	if (_type === FieldType.SingleSelect) {
 		return (
 			<span
 				className="rounded-md px-2 py-0.5 text-sm"
@@ -67,7 +68,7 @@ const renderField = (
 			</span>
 		);
 	}
-	if (type === FieldType.MultipleSelect) {
+	if (_type === FieldType.MultipleSelect) {
 		const chips = value as string[];
 		return chips.map((chip, idx) => (
 			<span
@@ -91,6 +92,7 @@ const renderField = (
 
 interface TableRow {
 	_id: string;
+	// biome-ignore lint/suspicious/noExplicitAny: Literally any
 	[key: string]: any;
 }
 
@@ -123,7 +125,7 @@ export const buildTable = (
 	fields: Fields,
 	handlers: string[] = [],
 ): ComposedTableComponent => {
-	const fieldsArray: FullDescriptionField[] = (function () {
+	const fieldsArray: FullDescriptionField[] = (() => {
 		if (fields instanceof ZodObject) {
 			const object = fields;
 			return Object.entries(object.shape).map(([key, field]) => {
@@ -191,7 +193,7 @@ export const buildTable = (
 		toggleSortingField: (field) => {
 			const { sortingFields } = get();
 			const existingSortingField = sortingFields.find((f) => f.field === field);
-			let newSortingFields;
+			let newSortingFields: SortingField[] = [];
 
 			if (!existingSortingField) {
 				newSortingFields = [...sortingFields, { field, direction: "desc" }];
@@ -253,15 +255,27 @@ export const buildTable = (
 						<th
 							className="p-2 pointer"
 							onClick={() => {
-								data.forEach((row) => {
+								for (const row of data) {
 									setRowSelection(row._id, !isAllSelected);
-								});
+								}
+							}}
+							onKeyDown={(e) => {
+								if (e.key === "Enter") {
+									for (const row of data) {
+										setRowSelection(row._id, !isAllSelected);
+									}
+								}
 							}}
 						>
 							<input
 								type="checkbox"
 								className="pointer"
 								checked={isAllSelected}
+								onChange={() => {
+									for (const row of data) {
+										setRowSelection(row._id, !isAllSelected);
+									}
+								}}
 							/>
 						</th>
 						{fieldsArray.map(({ header, field }) => (
@@ -273,15 +287,27 @@ export const buildTable = (
 								toggleSortingField={toggleSortingField}
 							/>
 						))}
-						{handlers.length > 0 && <th></th>}
+						{handlers.length > 0 && <th />}
 					</tr>
 				</thead>
 				<tbody>
 					{data.map((row) => (
 						<RowErrorBoundary key={row._id}>
-							<tr key={row._id} onClick={() => toggleRowSelection(row._id)}>
+							<tr
+								key={row._id}
+								onClick={() => toggleRowSelection(row._id)}
+								onKeyDown={(e) => {
+									if (e.key === "Enter") {
+										toggleRowSelection(row._id);
+									}
+								}}
+							>
 								<td className="py-3 px-2 text-center">
-									<input type="checkbox" checked={rowSelection[row._id]} />
+									<input
+										type="checkbox"
+										checked={rowSelection[row._id]}
+										onChange={() => toggleRowSelection(row._id)}
+									/>
 								</td>
 								{fieldsArray.map(({ field, render }) => (
 									<td

@@ -7,7 +7,7 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"ignore": []
+		"ignore": ["dist/"]
 	},
 	"formatter": {
 		"enabled": true,
@@ -21,7 +21,11 @@
 		"rules": {
 			"recommended": true,
 			"style": {
-				"useImportType": "off"
+				"useImportType": "off",
+				"noUselessElse": "off"
+			},
+			"correctness": {
+				"useExhaustiveDependencies": "off"
 			}
 		}
 	},
