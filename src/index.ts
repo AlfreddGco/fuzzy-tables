@@ -1,2 +1,2 @@
-import './index.css'
-export { buildTable } from './components/Table/index'
+import "./index.css";
+export { buildTable } from "./components/Table/index";

@@ -1,21 +1,21 @@
 {
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "composite": true,
-    "jsx": "react-jsx",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "paths": {
-      "fuzzy-tables": ["./src"],
-      "fuzzy-tables/*": ["./src/*"]
-    }
-  },
-  "include": ["demo/src/**/*", "src/**/*"],
-  "references": [
-    {
-      "path": "./tsconfig.json"
-    }
-  ]
-} 
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"composite": true,
+		"jsx": "react-jsx",
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+		"paths": {
+			"fuzzy-tables": ["./src"],
+			"fuzzy-tables/*": ["./src/*"]
+		}
+	},
+	"include": ["demo/src/**/*", "src/**/*"],
+	"references": [
+		{
+			"path": "./tsconfig.json"
+		}
+	]
+}
