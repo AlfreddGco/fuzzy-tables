@@ -269,7 +269,7 @@ export const buildTable = (
 							<input
 								type="checkbox"
 								className="pointer"
-								checked={isAllSelected}
+								checked={isAllSelected || false}
 								onChange={() => {
 									for (const row of data) {
 										setRowSelection(row._id, !isAllSelected);
@@ -304,7 +304,7 @@ export const buildTable = (
 								<td className="py-3 px-2 text-center">
 									<input
 										type="checkbox"
-										checked={rowSelection[row._id]}
+										checked={rowSelection[row._id] || false}
 										onChange={() => toggleRowSelection(row._id)}
 									/>
 								</td>
