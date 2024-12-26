@@ -13,5 +13,9 @@ export default defineConfig({
 		options.banner = {
 			js: '"use client";',
 		};
+		options.loader = {
+			...options.loader,
+			".scss": "css",
+		};
 	},
 });

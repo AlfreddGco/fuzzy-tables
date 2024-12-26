@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { headerNameFromField } from "../../utils";
@@ -10,7 +9,6 @@ import {
 	DropdownMenuItem,
 } from "./dropdown-menu";
 
-import styled from "styled-components";
 import {
 	ArrowUpIcon,
 	ArrowDownIcon,
@@ -70,59 +68,13 @@ export const RowErrorBoundary: React.FC<RowErrorBoundaryProps> = ({
 	return <ErrorBoundary fallback={<div>Error</div>}>{children}</ErrorBoundary>;
 };
 
-export const StyledTable = styled.table`
-  border-collapse: separate;
-  border-spacing: 0;
-  border: 1px solid #e5e7eb;
-  border-top: 0;
-  font-size: 0.85em;
-
-  thead {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    background-color: white;
-  }
-
-  th {
-    background-color: white;
-    border-top: 1px solid #e5e7eb;
-    border-bottom: 1px solid #e5e7eb;
-  }
-
-  th:not(:last-child), td:not(:last-child) {
-    border-right: 1px solid #e5e7eb;
-  }
-
-  th:not(:first-child):not(:last-child) {
-    min-width: 10em;
-  }
-
-  tr:not(:first-child) > td{
-    border-top: 1px solid #e5e7eb;
-  }
-
-  tr{
-    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-    transition-timing-function: cubic-bezier(.4,0,.2,1);
-    transition-duration: .15s;
-    cursor: pointer;
-  }
-
-  tr:hover{
-    background-color: hsla(240, 5%, 96%, 0.5);
-  }
-
-  td{
-    max-width: 20em;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-
-  td:not([data-type="string[]"]){
-    text-overflow: ellipsis;
-  }
-`;
+import styles from "./specifics.module.scss";
+export const StyledTable = ({
+	className = "",
+	...props
+}: React.HTMLAttributes<HTMLTableElement>) => (
+	<table {...props} className={`${styles.table} ${className}`} />
+);
 
 interface TableHandlerProps {
 	handlers: string[];

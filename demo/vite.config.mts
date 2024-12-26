@@ -12,4 +12,10 @@ export default defineConfig({
 			"fuzzy-tables": resolve(__dirname, "../src"),
 		},
 	},
+	css: {
+		modules: {
+			// Generate typings for CSS modules
+			generateScopedName: "[name]__[local]__[hash:base64:5]",
+		},
+	},
 });
