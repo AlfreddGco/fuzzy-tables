@@ -294,7 +294,11 @@ export const buildTable = (
 						<RowErrorBoundary key={row._id}>
 							<tr
 								key={row._id}
-								onClick={() => toggleRowSelection(row._id)}
+								onClick={(e) => {
+									if (!(e.target instanceof HTMLInputElement)) {
+										toggleRowSelection(row._id);
+									}
+								}}
 								onKeyDown={(e) => {
 									if (e.key === "Enter") {
 										toggleRowSelection(row._id);
