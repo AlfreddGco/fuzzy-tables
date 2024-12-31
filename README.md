@@ -54,7 +54,7 @@ You can also build a table from a Zod object. Fuzzy Tables will automatically in
 ```tsx
 import { z } from 'zod'
 const Table = buildTable(z.object({
-  _id: z.string(),
+  id: z.string(),
   name: z.string(),
   email: z.string().email(),
   status: z.enum(['active', 'inactive']),
@@ -112,7 +112,7 @@ function SelectedRowsDisplay({ data }) {
       <h3>Selected Items ({selectedRows.length})</h3>
       <ul>
         {selectedRows.map(row => (
-          <li key={row._id}>{row.name}</li>
+          <li key={row.id}>{row.name}</li>
         ))}
       </ul>
     </div>

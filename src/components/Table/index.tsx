@@ -90,7 +90,7 @@ const renderField = (
 };
 
 interface TableRow {
-	_id: string;
+	id: string;
 	// biome-ignore lint/suspicious/noExplicitAny: Literally any
 	[key: string]: any;
 }
@@ -234,7 +234,7 @@ export const buildTable = (
 			toggleSortingField,
 			listeners,
 		} = useTableStore();
-		const isAllSelected = data.every((row) => rowSelection[row._id]);
+		const isAllSelected = data.every((row) => rowSelection[row.id]);
 
 		const onHandlerClick = (handler: string, row: TableRow) => {
 			const listener = listeners[handler];
@@ -255,13 +255,13 @@ export const buildTable = (
 							className="p-2 pointer"
 							onClick={() => {
 								for (const row of data) {
-									setRowSelection(row._id, !isAllSelected);
+									setRowSelection(row.id, !isAllSelected);
 								}
 							}}
 							onKeyDown={(e) => {
 								if (e.key === "Enter") {
 									for (const row of data) {
-										setRowSelection(row._id, !isAllSelected);
+										setRowSelection(row.id, !isAllSelected);
 									}
 								}
 							}}
@@ -272,7 +272,7 @@ export const buildTable = (
 								checked={isAllSelected || false}
 								onChange={() => {
 									for (const row of data) {
-										setRowSelection(row._id, !isAllSelected);
+										setRowSelection(row.id, !isAllSelected);
 									}
 								}}
 							/>
@@ -291,25 +291,25 @@ export const buildTable = (
 				</thead>
 				<tbody>
 					{data.map((row) => (
-						<RowErrorBoundary key={row._id}>
+						<RowErrorBoundary key={row.id}>
 							<tr
-								key={row._id}
+								key={row.id}
 								onClick={(e) => {
 									if (!(e.target instanceof HTMLInputElement)) {
-										toggleRowSelection(row._id);
+										toggleRowSelection(row.id);
 									}
 								}}
 								onKeyDown={(e) => {
 									if (e.key === "Enter") {
-										toggleRowSelection(row._id);
+										toggleRowSelection(row.id);
 									}
 								}}
 							>
 								<td className="py-3 px-2 text-center">
 									<input
 										type="checkbox"
-										checked={rowSelection[row._id] || false}
-										onChange={() => toggleRowSelection(row._id)}
+										checked={rowSelection[row.id] || false}
+										onChange={() => toggleRowSelection(row.id)}
 									/>
 								</td>
 								{fieldsArray.map(({ field, render }) => (
@@ -339,7 +339,7 @@ export const buildTable = (
 
 	ComposedTable.useSelected = (data) => {
 		const { rowSelection } = useTableStore();
-		return data.filter((row) => rowSelection[row._id]);
+		return data.filter((row) => rowSelection[row.id]);
 	};
 
 	ComposedTable.useHandler = (handler, listener) => {

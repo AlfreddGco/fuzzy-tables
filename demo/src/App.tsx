@@ -3,7 +3,7 @@ import { buildTable } from "fuzzy-tables";
 
 const DEMO_DATA = [
 	{
-		_id: "1",
+		id: "1",
 		name: "John Doe",
 		email: "john@example.com",
 		status: "active",
@@ -13,7 +13,7 @@ const DEMO_DATA = [
 		metadata: { role: "admin", level: 3 },
 	},
 	{
-		_id: "2",
+		id: "2",
 		name: "Jane Smith",
 		email: "jane@example.com",
 		status: "inactive",
@@ -23,7 +23,7 @@ const DEMO_DATA = [
 		metadata: { role: "user", level: 2 },
 	},
 	{
-		_id: "3",
+		id: "3",
 		name: "Bob Johnson",
 		email: "bob@example.com",
 		status: "active",
@@ -46,7 +46,7 @@ const AdvancedTable = buildTable(
 import { z } from "zod";
 const FromZodObject = buildTable(
 	z.object({
-		_id: z.string(),
+		id: z.string(),
 		name: z.string(),
 		email: z.string().email(),
 		status: z.enum(["active", "inactive"]),
