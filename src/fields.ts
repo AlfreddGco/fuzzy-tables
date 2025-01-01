@@ -10,6 +10,7 @@ export enum FieldType {
 
 export const inferTypeFromValue = (value: any): FieldType => {
 	const dateRegex = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d{3})?Z?)?$/;
+	if (value instanceof Date) return FieldType.Date;
 	if (typeof value === "string" && dateRegex.test(value)) {
 		return FieldType.Date;
 	}
