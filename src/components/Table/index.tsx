@@ -40,11 +40,11 @@ const renderField = (
 	}
 	if (_type === FieldType.Date) {
 		const DATE_CONFIG: Intl.DateTimeFormatOptions = {
-			month: "2-digit",
 			day: "2-digit",
+			month: "2-digit",
 			year: "numeric",
 		};
-		return new Date(value).toLocaleDateString("en-US", DATE_CONFIG);
+		return new Date(value).toLocaleDateString("en-GB", DATE_CONFIG);
 	}
 	if (_type === FieldType.Undefined) return "-";
 	if (_type === FieldType.Checkbox) {
