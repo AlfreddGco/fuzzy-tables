@@ -34,59 +34,70 @@ const renderField = (
 	type?: string,
 ): React.ReactNode => {
 	const value = _.get(row, field);
-	let _type = type;
-	if (!_type) {
-		_type = inferTypeFromValue(value);
+	if (!type) {
+		const inferredType = inferTypeFromValue(value);
+		switch (inferredType) {
+			case FieldType.Date: {
+				const DATE_CONFIG: Intl.DateTimeFormatOptions = {
+					day: "2-digit",
+					month: "2-digit",
+					year: "numeric",
+				};
+				return new Date(value).toLocaleDateString("es-MX", DATE_CONFIG);
+			}
+			case FieldType.Undefined:
+			case FieldType.Null:
+				return "-";
+			case FieldType.Checkbox:
+				return value ? "✅" : "❌";
+			case FieldType.ObjectArray:
+				return JSON.stringify(value);
+			case FieldType.SingleSelect:
+				return (
+					<span
+						className="rounded-md px-2 py-0.5 text-sm"
+						style={{
+							backgroundColor:
+								rainbow[value.length % rainbow.length].alpha(0.8),
+							color: "white",
+							fontWeight: "500",
+						}}
+					>
+						{value}
+					</span>
+				);
+			case FieldType.MultipleSelect: {
+				const chips = value as string[];
+				return chips.map((chip, idx) => (
+					<span
+						key={chip}
+						className="rounded-md px-2 py-0.5 text-sm"
+						style={{
+							marginLeft: idx > 0 ? "0.25em" : 0,
+							backgroundColor: rainbow[chip.length % rainbow.length].alpha(0.8),
+							color: "white",
+							fontWeight: "500",
+						}}
+					>
+						{chip}
+					</span>
+				));
+			}
+			case FieldType.SingleLine: {
+				const stringValue =
+					typeof value === "object" ? JSON.stringify(value) : String(value);
+				return stringValue.slice(0, 200);
+			}
+			default: {
+				const _exhaustiveCheck: never = inferredType;
+				throw new Error(`Unhandled field type: ${_exhaustiveCheck}`);
+			}
+		}
+	} else {
+		const stringValue =
+			typeof value === "object" ? JSON.stringify(value) : String(value);
+		return stringValue.slice(0, 200);
 	}
-	if (_type === FieldType.Date) {
-		const DATE_CONFIG: Intl.DateTimeFormatOptions = {
-			day: "2-digit",
-			month: "2-digit",
-			year: "numeric",
-		};
-		return new Date(value).toLocaleDateString("en-GB", DATE_CONFIG);
-	}
-	if (_type === FieldType.Undefined) return "-";
-	if (_type === FieldType.Checkbox) {
-		return value ? "✅" : "❌";
-	}
-	if (_type === FieldType.ObjectArray) {
-		return JSON.stringify(value);
-	}
-	if (_type === FieldType.SingleSelect) {
-		return (
-			<span
-				className="rounded-md px-2 py-0.5 text-sm"
-				style={{
-					backgroundColor: rainbow[value.length % rainbow.length].alpha(0.8),
-					color: "white",
-					fontWeight: "500",
-				}}
-			>
-				{value}
-			</span>
-		);
-	}
-	if (_type === FieldType.MultipleSelect) {
-		const chips = value as string[];
-		return chips.map((chip, idx) => (
-			<span
-				key={chip}
-				className="rounded-md px-2 py-0.5 text-sm"
-				style={{
-					marginLeft: idx > 0 ? "0.25em" : 0,
-					backgroundColor: rainbow[chip.length % rainbow.length].alpha(0.8),
-					color: "white",
-					fontWeight: "500",
-				}}
-			>
-				{chip}
-			</span>
-		));
-	}
-	const stringValue =
-		typeof value === "object" ? JSON.stringify(value) : String(value);
-	return stringValue.slice(0, 200);
 };
 
 interface TableRow {

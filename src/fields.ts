@@ -6,6 +6,7 @@ export enum FieldType {
 	SingleSelect = "single-select",
 	ObjectArray = "object[]",
 	Undefined = "undefined",
+	Null = "null",
 }
 
 export const inferTypeFromValue = (value: any): FieldType => {
@@ -15,6 +16,7 @@ export const inferTypeFromValue = (value: any): FieldType => {
 		return FieldType.Date;
 	}
 	if (value === undefined) return FieldType.Undefined;
+	if (value === null) return FieldType.Null;
 	if (value === "true" || value === true) return FieldType.Checkbox;
 	if (value === "false" || value === false) return FieldType.Checkbox;
 	if (
