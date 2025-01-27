@@ -10,6 +10,11 @@ npm install fuzzy-tables
 yarn add fuzzy-tables
 ```
 
+After installing the package you just need to add the styles on the root layout of your project:
+```tsx
+import 'fuzzy-tables/dist/index.css';
+```
+
 ## Basic Usage
 
 This library is built around the concept of store-component factories. A function that returns a React component binded to a state store. This allows flexibility and easy access to the internal state of the table.
