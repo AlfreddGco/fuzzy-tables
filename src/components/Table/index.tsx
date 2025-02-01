@@ -108,6 +108,7 @@ interface TableRow {
 
 interface TableProps {
 	data: TableRow[];
+	onRowClick?: (row: TableRow) => void;
 }
 
 interface ComposedTableComponent extends React.FC<TableProps> {
@@ -236,7 +237,7 @@ export const buildTable = (
 		},
 	}));
 
-	const ComposedTable: ComposedTableComponent = ({ data }) => {
+	const ComposedTable: ComposedTableComponent = ({ data, onRowClick }) => {
 		const {
 			rowSelection,
 			toggleRowSelection,
@@ -306,13 +307,22 @@ export const buildTable = (
 							<tr
 								key={row.id}
 								onClick={(e) => {
-									if (!(e.target instanceof HTMLInputElement)) {
-										toggleRowSelection(row.id);
+									// If not clicking the checkbox
+									const clickingCheckbox = e.target instanceof HTMLInputElement;
+									if (!clickingCheckbox) {
+										if (onRowClick) {
+											onRowClick(row);
+										} else {
+											toggleRowSelection(row.id);
+										}
 									}
 								}}
 								onKeyDown={(e) => {
-									if (e.key === "Enter") {
+									if (e.key === "Space") {
 										toggleRowSelection(row.id);
+									}
+									if (e.key === "Enter" && onRowClick) {
+										onRowClick(row);
 									}
 								}}
 							>

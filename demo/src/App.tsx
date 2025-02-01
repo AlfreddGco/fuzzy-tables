@@ -60,6 +60,9 @@ const FromZodObject = buildTable(
 	}),
 );
 
+// Basic Table Example
+const OnRowClickedTable = buildTable(["name", "email", "status"]);
+
 const TableDemo: React.FC = () => {
 	return (
 		<div className="space-y-8 p-4">
@@ -79,6 +82,16 @@ const TableDemo: React.FC = () => {
 			<div>
 				<h2 className="text-xl font-bold mb-4">From Zod Object</h2>
 				<FromZodObject data={DEMO_DATA} />
+			</div>
+
+			<div>
+				<h2 className="text-xl font-bold mb-4">With onRowClick</h2>
+				<OnRowClickedTable
+					data={DEMO_DATA}
+					onRowClick={(row) => {
+						alert(`Row clicked: ${row.name}`);
+					}}
+				/>
 			</div>
 
 			<div className="text-sm space-y-2">
