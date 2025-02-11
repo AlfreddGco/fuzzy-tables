@@ -1,6 +1,42 @@
-import React from "react";
-import { buildTable } from "fuzzy-tables";
+import React, { useCallback, useRef, useState } from "react";
+import {
+	buildTable,
+	CreateForm,
+	CreateFormRef,
+	UpdateForm,
+	UpdateFormRef,
+} from "fuzzy-tables";
 
+// Define our schema and fields once and reuse for both Table and Forms
+const userFields = [
+	{
+		field: "name",
+		header: "Name",
+		z: z.string().min(2, "Name must be at least 2 characters"),
+	},
+	{
+		field: "email",
+		header: "Email",
+		z: z.string().email("Invalid email address"),
+	},
+	{
+		field: "status",
+		header: "Status",
+		z: z.enum(["active", "inactive"]),
+	},
+	{
+		field: "lastLogin",
+		header: "Last Login",
+		z: z.date(),
+	},
+	{
+		field: "isVerified",
+		header: "Verified",
+		z: z.boolean(),
+	},
+];
+
+// Sample data
 const DEMO_DATA = [
 	{
 		id: "1",
@@ -63,9 +99,42 @@ const FromZodObject = buildTable(
 // Basic Table Example
 const OnRowClickedTable = buildTable(["name", "email", "status"]);
 
+// Create the table with edit/delete actions
+const UserTable = buildTable(
+	userFields.map((f) => f.field),
+	["edit"],
+);
+
 const TableDemo: React.FC = () => {
+	const [users, setUsers] = useState(DEMO_DATA);
+	const createFormRef = useRef<CreateFormRef>(null);
+	const updateFormRef = useRef<UpdateFormRef<(typeof DEMO_DATA)[0]>>(null);
+
+	// Handler for creating new users
+	const handleCreate = async (formData: (typeof DEMO_DATA)[0]) => {
+		const newUser = {
+			...formData,
+			id: Math.random().toString(36).substr(2, 9),
+		};
+		setUsers((prev) => [...prev, newUser]);
+	};
+
+	// Handler for updating users
+	const handleUpdate = async (id: string, formData: (typeof DEMO_DATA)[0]) => {
+		setUsers((prev) =>
+			prev.map((user) => (user.id === id ? { ...formData, id } : user)),
+		);
+	};
+
+	// Register table handlers
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	const editUserHandler = useCallback((row: any) => {
+		updateFormRef.current?.openEditModal(row);
+	}, []);
+	UserTable.useHandler("edit", editUserHandler);
+
 	return (
-		<div className="space-y-8 p-4">
+		<div className="flex flex-col p-8 gap-y-8">
 			<div>
 				<h2 className="text-xl font-bold mb-4">Basic Table Example</h2>
 				<BasicTable data={DEMO_DATA} />
@@ -94,9 +163,38 @@ const TableDemo: React.FC = () => {
 				/>
 			</div>
 
-			<div className="text-sm space-y-2">
-				<h3 className="font-bold">Features demonstrated:</h3>
-				<ul className="list-disc list-inside">
+			<div className="flex justify-between items-center">
+				<h1 className="text-2xl font-bold">With Forms</h1>
+				<button
+					onClick={() => createFormRef.current?.open()}
+					className="px-4 py-2 bg-blue-500 text-white rounded-sm hover:bg-blue-600 transition-colors duration-200"
+					type="button"
+				>
+					Add User
+				</button>
+			</div>
+
+			<UserTable data={users} />
+
+			<CreateForm
+				ref={createFormRef}
+				fields={userFields}
+				onSubmit={handleCreate}
+				title="Add New User"
+				description="Create a new user account"
+			/>
+
+			<UpdateForm
+				ref={updateFormRef}
+				fields={userFields}
+				onSubmit={handleUpdate}
+				title="Edit User"
+				description="Update user information"
+			/>
+
+			<div className="mt-8 p-4 bg-gray-50 rounded-lg">
+				<h2 className="text-lg font-semibold mb-4">Features demonstrated:</h2>
+				<ul className="list-disc list-inside space-y-2">
 					<li>Row selection (individual and bulk)</li>
 					<li>Column sorting</li>
 					<li>
@@ -105,6 +203,13 @@ const TableDemo: React.FC = () => {
 					</li>
 					<li>Row handlers (edit/delete actions)</li>
 					<li>Colored tags with rainbow effect</li>
+					<li>Reusable field definitions for both Tables and Forms</li>
+					<li>Create new records with validation</li>
+					<li>Edit existing records</li>
+					<li>Delete records</li>
+					<li>Form validation with Zod schemas</li>
+					<li>Side panel forms with smooth animations</li>
+					<li>All table features (sorting, selection, etc.)</li>
 				</ul>
 			</div>
 		</div>
