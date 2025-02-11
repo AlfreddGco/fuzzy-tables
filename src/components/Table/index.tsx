@@ -9,13 +9,16 @@ import {
 	TableHandler,
 	RowErrorBoundary,
 } from "./specifics";
-import { FieldType, inferTypeFromValue } from "../../fields";
-import { headerNameFromField, rainbow } from "../../utils";
+import { FieldType, inferTypeFromValue } from "../../lib/fields";
+import { headerNameFromField, rainbow } from "../../lib/utils";
+import { TableRow } from "../../lib/types";
 
 type SortingField = {
 	field: string;
 	direction: "asc" | "desc";
 };
+
+type TableListener = (row: TableRow) => void;
 
 type TableStore = {
 	rowSelection: Record<string, boolean>;
@@ -23,9 +26,36 @@ type TableStore = {
 	setRowSelection: (rowId: string, value: boolean) => void;
 	sortingFields: SortingField[];
 	toggleSortingField: (field: string) => void;
-	listeners: Record<string, ((row: any) => void) | undefined>;
-	addListener: (handler: string, callback: (row: any) => void) => void;
+	listeners: Record<string, TableListener | undefined>;
+	addListener: (handler: string, callback: TableListener) => void;
 	removeListener: (handler: string) => void;
+};
+
+type TableProps = {
+	data: TableRow[];
+	onRowClick?: (row: TableRow) => void;
+};
+
+type ComposedTableComponent = React.FC<TableProps> & {
+	useSelected: (data: TableRow[]) => TableRow[];
+	useHandler: (handler: string, listener: TableListener) => void;
+	useTableStore: UseBoundStore<StoreApi<TableStore>>;
+};
+
+type Fields =
+	| string[]
+	| {
+			header: string;
+			field: string;
+			render?: (row: TableRow) => React.ReactNode;
+	  }[]
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	| ZodObject<any, any>;
+
+type FullDescriptionField = {
+	header: string;
+	field: string;
+	render: (row: TableRow) => React.ReactNode;
 };
 
 const renderField = (
@@ -43,7 +73,10 @@ const renderField = (
 					month: "2-digit",
 					year: "numeric",
 				};
-				return new Date(value).toLocaleDateString("es-MX", DATE_CONFIG);
+				return new Date(value as string).toLocaleDateString(
+					"es-MX",
+					DATE_CONFIG,
+				);
 			}
 			case FieldType.Undefined:
 			case FieldType.Null:
@@ -58,12 +91,12 @@ const renderField = (
 						className="rounded-md px-2 py-0.5 text-sm"
 						style={{
 							backgroundColor:
-								rainbow[value.length % rainbow.length].alpha(0.8),
+								rainbow[String(value).length % rainbow.length].alpha(0.8),
 							color: "white",
 							fontWeight: "500",
 						}}
 					>
-						{value}
+						{String(value)}
 					</span>
 				);
 			case FieldType.MultipleSelect: {
@@ -98,38 +131,6 @@ const renderField = (
 			typeof value === "object" ? JSON.stringify(value) : String(value);
 		return stringValue.slice(0, 200);
 	}
-};
-
-interface TableRow {
-	id: string;
-	// biome-ignore lint/suspicious/noExplicitAny: Literally any
-	[key: string]: any;
-}
-
-interface TableProps {
-	data: TableRow[];
-	onRowClick?: (row: TableRow) => void;
-}
-
-interface ComposedTableComponent extends React.FC<TableProps> {
-	useSelected: (data: TableRow[]) => TableRow[];
-	useHandler: (handler: string, listener: (row: TableRow) => void) => void;
-	useTableStore: UseBoundStore<StoreApi<TableStore>>;
-}
-
-type Fields =
-	| string[]
-	| {
-			header: string;
-			field: string;
-			render?: (row: TableRow) => React.ReactNode;
-	  }[]
-	| ZodObject<any, any>[];
-
-type FullDescriptionField = {
-	header: string;
-	field: string;
-	render: (row: TableRow) => React.ReactNode;
 };
 
 export const buildTable = (

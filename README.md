@@ -134,16 +134,20 @@ const Table = buildTable(['name', 'email'], ['edit', 'delete']);
 
 function TableWithActions({ data }) {
   // Register handler for edit action
-  Table.useHandler('edit', (row) => {
+
+  // Important! The handler must not mutate along renders if not needed!!
+  const editHandler = useCallback((row) => {
     console.log('Editing row:', row);
     // Open edit modal, etc.
-  });
+  }, []);
+  Table.useHandler('edit', editHandler);
 
-  // Register handler for delete action
-  Table.useHandler('delete', (row) => {
+  // Important! The handler must not mutate along renders if not needed!!
+  const deleteHandler = useCallback((row) => {
     console.log('Deleting row:', row);
     // Show confirmation dialog, etc.
-  });
+  }, []);
+  Table.useHandler('delete', deleteHandler);
 
   return <Table data={data} />;
 }
