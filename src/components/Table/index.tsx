@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { create, StoreApi, UseBoundStore } from "zustand";
 import { ZodArray, ZodBoolean, ZodDate, ZodEnum, ZodObject } from "zod";
+import { z } from "zod";
 import _ from "lodash";
 
 import {
@@ -122,6 +123,7 @@ type Fields =
 	| {
 			header: string;
 			field: string;
+			z?: z.ZodType;
 			render?: (row: TableRow) => React.ReactNode;
 	  }[]
 	| ZodObject<any, any>[];
