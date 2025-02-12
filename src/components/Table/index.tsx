@@ -127,7 +127,7 @@ export type Field =
 			render?: (row: TableRow) => React.ReactNode;
 	  };
 
-export type Fields = Field[] | ZodObject<any, any>[];
+export type Fields = Field[] | ZodObject<any, any>;
 
 type FullDescriptionField = {
 	header: string;

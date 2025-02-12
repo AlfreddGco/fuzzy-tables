@@ -1,3 +1,5 @@
 import "./index.css";
 import "./components/Table/specifics.scss";
-export { buildTable, type Field, type Fields } from "./components/Table/index";
+
+export type { Field, Fields } from "./components/Table/index";
+export { buildTable } from "./components/Table/index";

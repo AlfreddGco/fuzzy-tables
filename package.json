@@ -5,20 +5,21 @@
 	"main": "dist/index.js",
 	"module": "dist/index.mjs",
 	"types": "dist/index.d.ts",
-	"files": [
-		"dist"
-	],
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.mjs",
+			"require": "./dist/index.js"
+		},
+		"./styles.css": "./dist/index.css"
+	},
+	"files": ["dist"],
 	"scripts": {
 		"build": "tsup",
 		"dev": "vite demo",
 		"prepublishOnly": "npm run build"
 	},
-	"keywords": [
-		"react",
-		"table",
-		"component",
-		"typescript"
-	],
+	"keywords": ["react", "table", "component", "typescript"],
 	"author": "Your Name",
 	"license": "MIT",
 	"peerDependencies": {
