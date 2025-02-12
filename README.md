@@ -12,7 +12,7 @@ yarn add fuzzy-tables
 
 After installing the package you just need to add the styles on the root layout of your project:
 ```tsx
-import 'fuzzy-tables/dist/index.css';
+import 'fuzzy-tables/styles.css';
 ```
 
 ## Basic Usage
