@@ -118,15 +118,16 @@ interface ComposedTableComponent extends React.FC<TableProps> {
 	useTableStore: UseBoundStore<StoreApi<TableStore>>;
 }
 
-type Fields =
-	| string[]
+export type Field =
+	| string
 	| {
 			header: string;
 			field: string;
 			z?: z.ZodType;
 			render?: (row: TableRow) => React.ReactNode;
-	  }[]
-	| ZodObject<any, any>[];
+	  };
+
+export type Fields = Field[] | ZodObject<any, any>[];
 
 type FullDescriptionField = {
 	header: string;
