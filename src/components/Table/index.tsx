@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { create, StoreApi, UseBoundStore } from "zustand";
 import { ZodArray, ZodBoolean, ZodDate, ZodEnum, ZodObject } from "zod";
+import { z } from "zod";
 import _ from "lodash";
 
 import {
@@ -40,22 +41,6 @@ type ComposedTableComponent = React.FC<TableProps> & {
 	useSelected: (data: TableRow[]) => TableRow[];
 	useHandler: (handler: string, listener: TableListener) => void;
 	useTableStore: UseBoundStore<StoreApi<TableStore>>;
-};
-
-type Fields =
-	| string[]
-	| {
-			header: string;
-			field: string;
-			render?: (row: TableRow) => React.ReactNode;
-	  }[]
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	| ZodObject<any, any>;
-
-type FullDescriptionField = {
-	header: string;
-	field: string;
-	render: (row: TableRow) => React.ReactNode;
 };
 
 const renderField = (
@@ -131,6 +116,24 @@ const renderField = (
 			typeof value === "object" ? JSON.stringify(value) : String(value);
 		return stringValue.slice(0, 200);
 	}
+};
+
+export type Field =
+	| string
+	| {
+			header: string;
+			field: string;
+			z?: z.ZodType;
+			render?: (row: TableRow) => React.ReactNode;
+	  };
+
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+export type Fields = Field[] | ZodObject<any, any>;
+
+type FullDescriptionField = {
+	header: string;
+	field: string;
+	render: (row: TableRow) => React.ReactNode;
 };
 
 export const buildTable = (
