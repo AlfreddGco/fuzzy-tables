@@ -11,6 +11,11 @@
 			"import": "./dist/index.mjs",
 			"require": "./dist/index.js"
 		},
+		"./types": {
+			"types": "./dist/types.d.ts",
+			"import": "./dist/types.mjs",
+			"require": "./dist/types.js"
+		},
 		"./styles.css": "./dist/index.css"
 	},
 	"files": [
@@ -46,7 +51,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.4",
-		"@types/lodash": "^4.17.13",
+		"@types/lodash": "^4.17.15",
 		"@types/node": "^22.9.0",
 		"@types/react": "^18.3.12",
 		"@types/react-dom": "^18.3.1",

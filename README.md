@@ -134,16 +134,20 @@ const Table = buildTable(['name', 'email'], ['edit', 'delete']);
 
 function TableWithActions({ data }) {
   // Register handler for edit action
-  Table.useHandler('edit', (row) => {
+
+  // Important! The handler must not mutate along renders if not needed!!
+  const editHandler = useCallback((row) => {
     console.log('Editing row:', row);
     // Open edit modal, etc.
-  });
+  }, []);
+  Table.useHandler('edit', editHandler);
 
-  // Register handler for delete action
-  Table.useHandler('delete', (row) => {
+  // Important! The handler must not mutate along renders if not needed!!
+  const deleteHandler = useCallback((row) => {
     console.log('Deleting row:', row);
     // Show confirmation dialog, etc.
-  });
+  }, []);
+  Table.useHandler('delete', deleteHandler);
 
   return <Table data={data} />;
 }
@@ -194,3 +198,78 @@ function UserManagement() {
   );
 }
 ```
+
+## Forms Features
+
+Fuzzy Tables seamlessly integrates table and form functionality, recognizing that applications often need to create and update records with fields that mirror table columns. This unified approach simplifies development by maintaining consistency between your data display and input interfaces.
+
+Fuzzy Tables provides two forms components: `CreateForm` and `UpdateForm`. These forms will render
+each field accordingly based on `fields` prop. Currently displaying fields are:
+
+- Text input
+- Date input
+- Checkbox
+
+Support for more fields will be released soon.
+
+These are the mappings for each zod object type:
+- `z.string()` -> Text input
+- `z.boolean()` -> Checkbox
+- `z.date()` -> Date input
+
+Optional fields are supported. Adding `.optional()` to a field will not enforce the field to be filled.
+
+### CreateForm Example
+
+The `CreateForm` component is used to create new records. It takes a list of fields and a submit handler.
+
+```tsx
+import { zodFromFields } from 'fuzzy-tables/types';
+import { z } from 'zod';
+
+// These same fields can be used to build a table!!!
+const tableFields = [
+  { field: 'name', header: 'Name', z: z.string() },
+  { field: 'email', header: 'Email', z: z.string().email() },
+  { field: 'status', header: 'Status', z: z.enum(['active', 'inactive']) },
+]
+const upsertSchema = zodFromFields(tableFields);
+
+const App = () => {
+  const createFormRef = useRef<CreateFormRef>(null);
+  return (
+    <>
+      <button onClick={() => createFormRef.current?.open()}>Create</button>
+      <CreateForm<z.infer<typeof upsertSchema>>
+        fields={tableFields}
+        ref={createFormRef}
+        title='New Record'
+        description='Create a new record by filling the fields below'
+        onSubmit={async (id, formData) => {
+          // Your submit logic here
+        }}
+        getErrorMessage={(error) => {
+          // Your error message logic here
+          // error could be TRPCClientError, ZodError, NetworkError, etc.
+          // Individual field errors are already handled by default, this function
+          // is only used for parsing global errors into a string message
+          return 'An error occurred';
+        }}
+      />
+    </>
+  )
+}
+```
+
+Do not loose typings on your forms! `formData` will be typed from `z.infer<typeof upsertSchema>`
+
+#### Currently missing features
+
+TODO'S:
+- Improve installation experience by getting rid of the need to import css on root
+- Add useBuildTable hook
+- Add support for more fields types
+- Add support for custom fields
+- Add support for custom validation
+- Add testing
+- Build documentation website
