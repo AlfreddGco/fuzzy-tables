@@ -8,6 +8,7 @@ export type CreateFormRef = { open: () => void };
 
 type CreateFormProps<T> = {
 	fields: SideFormProps<T>["fields"];
+	getErrorMessage?: SideFormProps<T>["getErrorMessage"];
 	onSubmit: (formData: T) => Promise<void>;
 	title: string;
 	description: string;
@@ -15,7 +16,13 @@ type CreateFormProps<T> = {
 
 export const CreateForm = forwardRef(
 	<T extends GenericRecord>(
-		{ fields, onSubmit, title, description }: CreateFormProps<T>,
+		{
+			fields,
+			onSubmit,
+			title,
+			description,
+			getErrorMessage,
+		}: CreateFormProps<T>,
 		ref: React.ForwardedRef<CreateFormRef>,
 	) => {
 		const sidebarRef = useRef<SideFormRef<T>>(null);
@@ -32,6 +39,7 @@ export const CreateForm = forwardRef(
 				description={description}
 				onSubmit={onSubmit}
 				submitText="Agregar"
+				getErrorMessage={getErrorMessage}
 			/>
 		);
 	},
@@ -47,6 +55,7 @@ export type UpdateFormRef<T> = {
 
 type UpdateFormProps<T> = {
 	fields: SideFormProps<T>["fields"];
+	getErrorMessage?: SideFormProps<T>["getErrorMessage"];
 	onSubmit: (id: string, formData: T) => Promise<void>;
 	title: string;
 	description: string;
@@ -54,7 +63,13 @@ type UpdateFormProps<T> = {
 
 export const UpdateForm = forwardRef(
 	<T extends GenericRecord>(
-		{ fields, onSubmit, title, description }: UpdateFormProps<T>,
+		{
+			fields,
+			onSubmit,
+			title,
+			description,
+			getErrorMessage,
+		}: UpdateFormProps<T>,
 		ref: React.ForwardedRef<UpdateFormRef<T>>,
 	) => {
 		const sidebarRef = useRef<SideFormRef<T>>(null);
@@ -92,6 +107,7 @@ export const UpdateForm = forwardRef(
 				description={description}
 				onSubmit={handleSubmit}
 				submitText="Guardar"
+				getErrorMessage={getErrorMessage}
 			/>
 		);
 	},

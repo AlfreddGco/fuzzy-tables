@@ -16,7 +16,9 @@ type ExtractZodType<T extends z.ZodType> = T extends z.ZodString
 					? ExtractZodType<U>
 					: T extends z.ZodEffects<infer U extends z.ZodType>
 						? ExtractZodType<U>
-						: never;
+						: T extends z.ZodNullable<infer U extends z.ZodType>
+							? ExtractZodType<U> | null
+							: never;
 
 type NestedField<T extends { field: string; z: z.ZodType }> = T extends {
 	field: `${infer Parent}.${infer Child}`;
