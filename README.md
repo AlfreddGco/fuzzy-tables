@@ -29,6 +29,8 @@ The simplest way to create a table is by providing an array of field names:
 const Table = buildTable(['name', 'email', 'status'])
 ```
 
+![Basic Image](docs/assets/basic.png)
+
 ### 2. From column definitions
 
 For more control, you can define columns with custom headers and rendering:
@@ -52,6 +54,10 @@ const Table = buildTable([
 ])
 ```
 
+Which can look like this:
+
+![Advanced usage](docs/assets/advanced.png)
+
 ### 3. From Zod Object
 
 You can also build a table from a Zod object. Fuzzy Tables will automatically infer the type of each field and render it accordingly as single line, date, checkbox, multiple select, single select, or object array.
@@ -72,6 +78,16 @@ const Table = buildTable(z.object({
   }),
 }))
 ```
+
+![Zod Usage](docs/assets/zod.png)
+
+## Props
+
+Using the `onRowClick` prop, you can give more functionality to your table
+
+![Click table](docs/assets/click.png)
+
+![Popup open](docs/assets/click-popup.png)
 
 ## Hooks
 
@@ -200,6 +216,8 @@ function UserManagement() {
 ```
 
 ## Forms Features
+
+![Forms image](docs/assets/forms.png)
 
 Fuzzy Tables seamlessly integrates table and form functionality, recognizing that applications often need to create and update records with fields that mirror table columns. This unified approach simplifies development by maintaining consistency between your data display and input interfaces.
 
