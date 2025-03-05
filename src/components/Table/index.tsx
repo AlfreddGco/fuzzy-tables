@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { create, StoreApi, UseBoundStore } from "zustand";
 import { ZodArray, ZodBoolean, ZodDate, ZodEnum, ZodObject } from "zod";
 import { z } from "zod";
@@ -380,4 +380,9 @@ export const buildTable = (
 	ComposedTable.useTableStore = useTableStore;
 
 	return ComposedTable;
+};
+
+export const useBuildTable = (fields: Fields, handlers: string[] = []): ComposedTableComponent => {
+	const [table] = useState(() => buildTable(fields, handlers));
+	return table;
 };
