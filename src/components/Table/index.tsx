@@ -383,6 +383,11 @@ export const buildTable = (
 };
 
 export const useBuildTable = (fields: Fields, handlers: string[] = []): ComposedTableComponent => {
-	const [table] = useState(() => buildTable(fields, handlers));
+	const [table, setTable] = useState(() => buildTable(fields, handlers));
+	
+	useEffect(() => {
+		setTable(buildTable(fields, handlers));
+	}, [fields, handlers]);
+	
 	return table;
 };
