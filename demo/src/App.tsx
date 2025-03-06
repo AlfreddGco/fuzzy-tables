@@ -30,6 +30,12 @@ const userFields = [
 		z: z.date(),
 	},
 	{
+		field: "projects",
+		header: "Projects",
+		z: z.array(z.string()),
+		options: ["Project 1", "Project 2", "Project 3"],
+	},
+	{
 		field: "isVerified",
 		header: "Verified",
 		z: z.boolean(),
