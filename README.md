@@ -208,6 +208,7 @@ each field accordingly based on `fields` prop. Currently displaying fields are:
 
 - Text input
 - Date input
+- Multiple select
 - Checkbox
 
 Support for more fields will be released soon.
@@ -216,8 +217,11 @@ These are the mappings for each zod object type:
 - `z.string()` -> Text input
 - `z.boolean()` -> Checkbox
 - `z.date()` -> Date input
+- `z.array(z.string())` -> Multiple select
 
 Optional fields are supported. Adding `.optional()` to a field will not enforce the field to be filled.
+
+Note: the `options` field is needed for multiple select fields.
 
 ### CreateForm Example
 
