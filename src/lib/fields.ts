@@ -37,7 +37,7 @@ export const inferTypeFromValue = (value: unknown): FieldType => {
 export const categorizeNestedField = (
 	path: string,
 	zSchema: z.ZodType,
-): FieldType.SingleLine | FieldType.Date | FieldType.Checkbox => {
+): FieldType.SingleLine | FieldType.Date | FieldType.Checkbox | FieldType.MultipleSelect=> {
 	const getNestedType = (
 		type: z.ZodType | z.ZodRawShape,
 		parts: string[],
@@ -72,5 +72,6 @@ export const categorizeNestedField = (
 
 	if (innerType instanceof z.ZodDate) return FieldType.Date;
 	if (innerType instanceof z.ZodBoolean) return FieldType.Checkbox;
+	if (innerType instanceof z.ZodArray) return FieldType.MultipleSelect;
 	return FieldType.SingleLine;
 };

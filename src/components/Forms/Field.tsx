@@ -10,6 +10,7 @@ export function SidebarField<T>({
 	onBlur,
 	error,
 	type = FieldType.SingleLine,
+	options,
 }: {
 	field: keyof T;
 	header: string;
@@ -17,7 +18,8 @@ export function SidebarField<T>({
 	onChange: (value: unknown) => void;
 	onBlur: () => void;
 	error?: string | null;
-	type?: FieldType.SingleLine | FieldType.Date | FieldType.Checkbox;
+	type?: FieldType.SingleLine | FieldType.Date | FieldType.Checkbox | FieldType.MultipleSelect;
+	options?: string[];
 }) {
 	const shouldShowError = error != null && error !== "";
 	const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,6 +66,41 @@ export function SidebarField<T>({
 					onChange={(e) => onChange(e.target.checked)}
 					onBlur={onBlur}
 				/>
+			) : type === FieldType.MultipleSelect ? (
+				<div className="flex flex-col gap-2">
+					<div className="flex flex-row flex-wrap gap-2">
+						{options?.map((option) => {
+							const values = Array.isArray(value) ? value : [];
+							const isSelected = values.includes(option);
+							return (
+								<label
+									key={option}
+									className={`
+										inline-flex items-center gap-2 px-3 py-1.5 rounded-md cursor-pointer
+										${isSelected
+											? 'bg-blue-100 text-blue-800 border-blue-200'
+											: 'bg-gray-50 text-gray-700 border-gray-200'
+										} 
+										border hover:bg-opacity-80 transition-colors duration-200
+									`}
+								>
+									<input
+										type="checkbox"
+										className="hidden"
+										checked={isSelected}
+										onChange={() => {
+											const newValues = isSelected
+												? values.filter(v => v !== option)
+												: [...values, option];
+											onChange(newValues);
+										}}
+									/>
+									{option}
+								</label>
+							);
+						})}
+					</div>
+				</div>
 			) : (
 				<input
 					type="text"

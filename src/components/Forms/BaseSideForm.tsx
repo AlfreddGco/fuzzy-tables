@@ -20,6 +20,8 @@ export type SideFormProps<T> = {
 		header: string;
 		/** Zod schema for field validation */
 		z: z.ZodType;
+		/** Optional array of options for single select fields */
+		options?: string[];
 	}[];
 	/** Title displayed at the top of the side form */
 	title: string;
@@ -210,6 +212,7 @@ export const SideForm = forwardRef(
 									onBlur={() => handleFieldBlur(field.field as string)}
 									error={validationErrors[field.field as keyof T]}
 									type={categorizeNestedField(field.field as string, zSchema)}
+									options={field.options}
 								/>
 							))}
 						</div>
