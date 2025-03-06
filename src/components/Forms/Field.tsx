@@ -10,6 +10,7 @@ export function SidebarField<T>({
 	onBlur,
 	error,
 	type = FieldType.SingleLine,
+	options,
 }: {
 	field: keyof T;
 	header: string;
@@ -17,7 +18,8 @@ export function SidebarField<T>({
 	onChange: (value: unknown) => void;
 	onBlur: () => void;
 	error?: string | null;
-	type?: FieldType.SingleLine | FieldType.Date | FieldType.Checkbox;
+	type?: FieldType;
+	options?: string[];
 }) {
 	const shouldShowError = error != null && error !== "";
 	const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,6 +66,22 @@ export function SidebarField<T>({
 					onChange={(e) => onChange(e.target.checked)}
 					onBlur={onBlur}
 				/>
+			) : type === FieldType.SingleSelect ? (
+				<select
+					name={field as string}
+					className={`border border-gray-300 rounded-md p-2 ${
+						shouldShowError ? "border-blue-500" : ""
+					}`}
+					value={String(value ?? "")}
+					onChange={(e) => onChange(e.target.value)}
+					onBlur={onBlur}
+				>
+					{options?.map((option) => (
+						<option key={option} value={option}>
+							{option}
+						</option>
+					))}
+				</select>
 			) : (
 				<input
 					type="text"
@@ -75,7 +93,7 @@ export function SidebarField<T>({
 					onChange={handleTextChange}
 					onBlur={onBlur}
 				/>
-			)}
+			)}	
 			{shouldShowError && (
 				<p className="text-red-500 text-sm">
 					{error === "Required"
