@@ -18,7 +18,7 @@ export function SidebarField<T>({
 	onChange: (value: unknown) => void;
 	onBlur: () => void;
 	error?: string | null;
-	type?: FieldType;
+	type?: FieldType.SingleLine | FieldType.Date | FieldType.Checkbox | FieldType.SingleSelect;
 	options?: string[];
 }) {
 	const shouldShowError = error != null && error !== "";
