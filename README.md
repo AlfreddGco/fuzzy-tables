@@ -216,8 +216,11 @@ These are the mappings for each zod object type:
 - `z.string()` -> Text input
 - `z.boolean()` -> Checkbox
 - `z.date()` -> Date input
+- `z.enum([])` -> Select
 
 Optional fields are supported. Adding `.optional()` to a field will not enforce the field to be filled.
+
+Note: the `options` field is needed for single select fields.
 
 ### CreateForm Example
 
