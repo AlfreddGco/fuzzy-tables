@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { create, StoreApi, UseBoundStore } from "zustand";
 import { ZodArray, ZodBoolean, ZodDate, ZodEnum, ZodObject } from "zod";
 import { z } from "zod";
@@ -383,11 +383,26 @@ export const buildTable = (
 };
 
 export const useBuildTable = (fields: Fields, handlers: string[] = []): ComposedTableComponent => {
+	const stableFields = (() => {
+		if (fields instanceof ZodObject) {
+			return JSON.stringify(Object.keys(fields.shape));
+		}
+		return JSON.stringify(
+			fields.map(field => 
+				typeof field === 'string' 
+					? field 
+					: { field: field.field, header: field.header }
+			)
+		);
+	})();
+
+	const stableHandlers = JSON.stringify(handlers);
+
 	const [table, setTable] = useState(() => buildTable(fields, handlers));
 	
 	useEffect(() => {
 		setTable(buildTable(fields, handlers));
-	}, [fields, handlers]);
+	}, [stableFields, stableHandlers]);
 	
 	return table;
 };
