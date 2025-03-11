@@ -20,6 +20,8 @@ export type SideFormProps<T> = {
 		header: string;
 		/** Zod schema for field validation */
 		z: z.ZodType;
+		/** Optional array of options for single select fields */
+		options?: string[];
 	}[];
 	/** Title displayed at the top of the side form */
 	title: string;
@@ -198,20 +200,23 @@ export const SideForm = forwardRef(
 						style={{ height: "calc(100% - 88px)" }}
 					>
 						<div className="space-y-4">
-							{fields.map((field) => (
-								<SidebarField<T>
-									key={field.field as string}
-									field={field.field as string}
-									header={field.header}
-									value={_.get(formData, field.field as string) ?? ""}
-									onChange={(value) =>
-										handleFieldChange(field.field as string, value)
-									}
-									onBlur={() => handleFieldBlur(field.field as string)}
-									error={validationErrors[field.field as keyof T]}
-									type={categorizeNestedField(field.field as string, zSchema)}
-								/>
-							))}
+							{fields.map((field) => {
+								return (
+									<SidebarField<T>
+										key={field.field as string}
+										field={field.field as string}
+										header={field.header}
+										value={_.get(formData, field.field as string) ?? ""}
+										onChange={(value) =>
+											handleFieldChange(field.field as string, value)
+										}
+										onBlur={() => handleFieldBlur(field.field as string)}
+										error={validationErrors[field.field as keyof T]}
+										type={categorizeNestedField(field.field as string, zSchema)}
+										options={field.options}
+									/>
+								);
+							})}
 						</div>
 						<div className="py-6">
 							{globalError && (

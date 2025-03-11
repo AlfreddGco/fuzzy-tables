@@ -30,6 +30,12 @@ const userFields = [
 		z: z.date(),
 	},
 	{
+		field: "role",
+		header: "Role",
+		z: z.enum(["admin", "user"]),
+		options: ["admin", "user"],
+	},
+	{
 		field: "isVerified",
 		header: "Verified",
 		z: z.boolean(),
@@ -85,6 +91,7 @@ const FromZodObject = buildTable(
 		id: z.string(),
 		name: z.string(),
 		email: z.string().email(),
+		role: z.enum(["admin", "user"]),
 		status: z.enum(["active", "inactive"]),
 		tags: z.array(z.string()),
 		lastLogin: z.date(),
