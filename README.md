@@ -169,6 +169,26 @@ function TableWithActions({ data }) {
 }
 ```
 
+### useBuildTable
+
+For cases where you need to create tables with dynamic fields inside components, use the `useBuildTable` hook instead of `buildTable`. This hook ensures the table component is properly managed within React's lifecycle:
+
+```tsx
+function DynamicTable() {
+  // Fields that might change based on some condition
+  const fields = useMemo(() => {
+    return someCondition 
+      ? ['name', 'email'] 
+      : ['name', 'email', 'status'];
+  }, [someCondition]);
+
+  // Use the hook instead of buildTable
+  const Table = useBuildTable(fields);
+  
+  return <Table data={data} />;
+}
+```
+
 ## Complete Example with Hooks
 
 Here's a more complex example showing how to use all the hooks together:
