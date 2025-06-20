@@ -102,7 +102,7 @@ const OnRowClickedTable = buildTable(["name", "email", "status"]);
 
 // Create the table with edit/delete actions
 const UserTable = buildTable(
-	userFields.map((f) => f.field),
+	userFields,
 	["edit"],
 );
 

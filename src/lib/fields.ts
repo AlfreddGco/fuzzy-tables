@@ -1,43 +1,45 @@
 import { z } from "zod";
 
-export enum FieldType {
-	SingleLine = "string",
-	Date = "date",
-	Checkbox = "boolean",
-	MultipleSelect = "string[]",
-	SingleSelect = "single-select",
-	ObjectArray = "object[]",
-	Undefined = "undefined",
-	Null = "null",
-}
+export const FIELD_TYPES = {
+  SingleLine: 'SingleLine',
+  Date: 'Date',
+  Checkbox: 'Checkbox',
+  MultipleSelect: 'MultipleSelect',
+  SingleSelect: 'SingleSelect',
+  ObjectArray: 'ObjectArray',
+  Undefined: 'Undefined',
+  Null: 'Null',
+} as const
+
+export type FieldType = (typeof FIELD_TYPES)[keyof typeof FIELD_TYPES];
 
 export const inferTypeFromValue = (value: unknown): FieldType => {
 	const dateRegex = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d{3})?Z?)?$/;
-	if (value instanceof Date) return FieldType.Date;
+	if (value instanceof Date) return FIELD_TYPES.Date;
 	if (typeof value === "string" && dateRegex.test(value)) {
-		return FieldType.Date;
+		return FIELD_TYPES.Date;
 	}
-	if (value === undefined) return FieldType.Undefined;
-	if (value === null) return FieldType.Null;
-	if (value === "true" || value === true) return FieldType.Checkbox;
-	if (value === "false" || value === false) return FieldType.Checkbox;
+	if (value === undefined) return FIELD_TYPES.Undefined;
+	if (value === null) return FIELD_TYPES.Null;
+	if (value === "true" || value === true) return FIELD_TYPES.Checkbox;
+	if (value === "false" || value === false) return FIELD_TYPES.Checkbox;
 	if (
 		Array.isArray(value) &&
 		value.length > 0 &&
 		value.some((v) => typeof v === "object" && v !== null)
 	) {
-		return FieldType.ObjectArray;
+		return FIELD_TYPES.ObjectArray;
 	}
 	if (Array.isArray(value)) {
-		return FieldType.MultipleSelect;
+		return FIELD_TYPES.MultipleSelect;
 	}
-	return FieldType.SingleLine;
+	return FIELD_TYPES.SingleLine;
 };
 
 export const categorizeNestedField = (
 	path: string,
 	zSchema: z.ZodType,
-): FieldType.SingleLine | FieldType.Date | FieldType.Checkbox | FieldType.SingleSelect => {
+): typeof FIELD_TYPES["SingleLine" | "Date" | "Checkbox" | "SingleSelect"] => {
 	const getNestedType = (
 		type: z.ZodType | z.ZodRawShape,
 		parts: string[],
@@ -63,17 +65,17 @@ export const categorizeNestedField = (
 		zSchema instanceof z.ZodObject ? zSchema.shape : {},
 		path.split("."),
 	);
-	if (!finalType) return FieldType.SingleLine;
+	if (!finalType) return FIELD_TYPES.SingleLine;
 
 	// Unwrap any wrapped types (like ZodDefault or ZodEffects)
 	const unwrappedType =
 		finalType instanceof z.ZodEffects ? finalType._def.schema : finalType;
 	const innerType = unwrappedType._def?.innerType ?? unwrappedType;
 
-	if (innerType instanceof z.ZodDate) return FieldType.Date;
-	if (innerType instanceof z.ZodBoolean) return FieldType.Checkbox;
-	if (innerType instanceof z.ZodEnum) return FieldType.SingleSelect;
-	return FieldType.SingleLine;
+	if (innerType instanceof z.ZodDate) return FIELD_TYPES.Date;
+	if (innerType instanceof z.ZodBoolean) return FIELD_TYPES.Checkbox;
+	if (innerType instanceof z.ZodEnum) return FIELD_TYPES.SingleSelect;
+	return FIELD_TYPES.SingleLine;
 };
 
 export const getEnumOptions = (

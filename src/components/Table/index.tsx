@@ -10,7 +10,7 @@ import {
 	TableHandler,
 	RowErrorBoundary,
 } from "./specifics";
-import { FieldType, inferTypeFromValue } from "../../lib/fields";
+import { FieldType, FIELD_TYPES, inferTypeFromValue, categorizeNestedField } from "../../lib/fields";
 import { headerNameFromField, rainbow } from "../../lib/utils";
 import { TableRow } from "../../lib/types";
 
@@ -46,73 +46,78 @@ type ComposedTableComponent = React.FC<TableProps> & {
 const renderField = (
 	row: TableRow,
 	field: string,
-	type?: string,
+	type?: string | FieldType,
 ): React.ReactNode => {
 	const value = _.get(row, field);
+	const renderInferredType = (inferred: FieldType) => {
+  	switch (inferred) {
+  		case FIELD_TYPES.Date: {
+  			const DATE_CONFIG: Intl.DateTimeFormatOptions = {
+  				day: "2-digit",
+  				month: "2-digit",
+  				year: "numeric",
+  			};
+  			return new Date(value as string).toLocaleDateString(
+  				"es-MX",
+  				DATE_CONFIG,
+  			);
+  		}
+  		case FIELD_TYPES.Undefined:
+  		case FIELD_TYPES.Null:
+  			return "-";
+  		case FIELD_TYPES.Checkbox:
+  			return value ? "✅" : "❌";
+  		case FIELD_TYPES.ObjectArray:
+  			return JSON.stringify(value);
+  		case FIELD_TYPES.SingleSelect:
+  			return (
+  				<span
+  					className="rounded-md px-2 py-0.5 text-sm"
+  					style={{
+  						backgroundColor:
+  							rainbow[String(value).length % rainbow.length].alpha(0.8),
+  						color: "white",
+  						fontWeight: "500",
+  					}}
+  				>
+  					{String(value)}
+  				</span>
+  			);
+  		case FIELD_TYPES.MultipleSelect: {
+  			const chips = value as string[];
+  			return chips.map((chip, idx) => (
+  				<span
+  					key={chip}
+  					className="rounded-md px-2 py-0.5 text-sm"
+  					style={{
+  						marginLeft: idx > 0 ? "0.25em" : 0,
+  						backgroundColor: rainbow[chip.length % rainbow.length].alpha(0.8),
+  						color: "white",
+  						fontWeight: "500",
+  					}}
+  				>
+  					{chip}
+  				</span>
+  			));
+  		}
+  		case FIELD_TYPES.SingleLine: {
+  			const stringValue =
+  				typeof value === "object" ? JSON.stringify(value) : String(value);
+  			return stringValue.slice(0, 200);
+  		}
+  		default: {
+  			const _exhaustiveCheck: never = inferred;
+  			throw new Error(`Unhandled field type: ${_exhaustiveCheck}`);
+  		}
+  	}
+	}
 	if (!type) {
 		const inferredType = inferTypeFromValue(value);
-		switch (inferredType) {
-			case FieldType.Date: {
-				const DATE_CONFIG: Intl.DateTimeFormatOptions = {
-					day: "2-digit",
-					month: "2-digit",
-					year: "numeric",
-				};
-				return new Date(value as string).toLocaleDateString(
-					"es-MX",
-					DATE_CONFIG,
-				);
-			}
-			case FieldType.Undefined:
-			case FieldType.Null:
-				return "-";
-			case FieldType.Checkbox:
-				return value ? "✅" : "❌";
-			case FieldType.ObjectArray:
-				return JSON.stringify(value);
-			case FieldType.SingleSelect:
-				return (
-					<span
-						className="rounded-md px-2 py-0.5 text-sm"
-						style={{
-							backgroundColor:
-								rainbow[String(value).length % rainbow.length].alpha(0.8),
-							color: "white",
-							fontWeight: "500",
-						}}
-					>
-						{String(value)}
-					</span>
-				);
-			case FieldType.MultipleSelect: {
-				const chips = value as string[];
-				return chips.map((chip, idx) => (
-					<span
-						key={chip}
-						className="rounded-md px-2 py-0.5 text-sm"
-						style={{
-							marginLeft: idx > 0 ? "0.25em" : 0,
-							backgroundColor: rainbow[chip.length % rainbow.length].alpha(0.8),
-							color: "white",
-							fontWeight: "500",
-						}}
-					>
-						{chip}
-					</span>
-				));
-			}
-			case FieldType.SingleLine: {
-				const stringValue =
-					typeof value === "object" ? JSON.stringify(value) : String(value);
-				return stringValue.slice(0, 200);
-			}
-			default: {
-				const _exhaustiveCheck: never = inferredType;
-				throw new Error(`Unhandled field type: ${_exhaustiveCheck}`);
-			}
-		}
+		return renderInferredType(inferredType);
+	} else if(type in FIELD_TYPES) {
+    return renderInferredType(FIELD_TYPES[type as keyof typeof FIELD_TYPES]);
 	} else {
-		const stringValue =
+  	const stringValue =
 			typeof value === "object" ? JSON.stringify(value) : String(value);
 		return stringValue.slice(0, 200);
 	}
@@ -144,17 +149,17 @@ export const buildTable = (
 		if (fields instanceof ZodObject) {
 			const object = fields;
 			return Object.entries(object.shape).map(([key, field]) => {
-				let type = FieldType.SingleLine;
+				let type: FieldType = FIELD_TYPES.SingleLine;
 				if (field instanceof ZodEnum) {
-					type = FieldType.SingleSelect;
+					type = FIELD_TYPES.SingleSelect;
 				} else if (field instanceof ZodArray) {
-					type = FieldType.MultipleSelect;
+					type = FIELD_TYPES.MultipleSelect;
 				} else if (field instanceof ZodDate) {
-					type = FieldType.Date;
+					type = FIELD_TYPES.Date;
 				} else if (field instanceof ZodBoolean) {
-					type = FieldType.Checkbox;
+					type = FIELD_TYPES.Checkbox;
 				} else if (field instanceof ZodObject) {
-					type = FieldType.ObjectArray;
+					type = FIELD_TYPES.ObjectArray;
 				}
 				return {
 					header: headerNameFromField(key),
@@ -180,12 +185,20 @@ export const buildTable = (
 					typeof field === "object" && "header" in field && "field" in field,
 			)
 		) {
-			// Array of {header,field,render}
-			return fields.map((field) => ({
-				...field,
-				render:
-					field.render || ((row: TableRow) => renderField(row, field.field)),
-			}));
+			// Array of {header,field,render,z?}
+			return fields.map((field) => {
+				let type: FieldType | undefined;
+				if (field.z) {
+					// Create a temporary schema to use categorizeNestedField
+					const tempSchema = z.object({ [field.field]: field.z });
+					type = categorizeNestedField(field.field, tempSchema);
+				}
+				return {
+					...field,
+					render:
+						field.render || ((row: TableRow) => renderField(row, field.field, type)),
+				};
+			});
 		}
 		throw new Error("Invalid fields type");
 	})();

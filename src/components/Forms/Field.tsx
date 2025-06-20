@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import _ from "lodash";
-import { FieldType } from "../../lib/fields";
+import { FIELD_TYPES } from "../../lib/fields";
 import { rainbow } from "../../lib/utils";
 
 export function SidebarField<T>({
@@ -10,7 +10,7 @@ export function SidebarField<T>({
 	onChange,
 	onBlur,
 	error,
-	type = FieldType.SingleLine,
+	type = FIELD_TYPES.SingleLine,
 	options,
 }: {
 	field: keyof T;
@@ -19,7 +19,7 @@ export function SidebarField<T>({
 	onChange: (value: unknown) => void;
 	onBlur: () => void;
 	error?: string | null;
-	type?: FieldType.SingleLine | FieldType.Date | FieldType.Checkbox | FieldType.SingleSelect;
+	type?: typeof FIELD_TYPES["SingleLine" | "Date" | "Checkbox" | "SingleSelect"];
 	options?: string[];
 }) {
 	const shouldShowError = error != null && error !== "";
@@ -45,7 +45,7 @@ export function SidebarField<T>({
 	return (
 		<div className="flex flex-col gap-2">
 			<p className="text-md font-medium">{header}</p>
-			{type === FieldType.Date ? (
+			{type === FIELD_TYPES.Date ? (
 				<input
 					type="date"
 					name={field as string}
@@ -56,7 +56,7 @@ export function SidebarField<T>({
 					onChange={handleDateChange}
 					onBlur={onBlur}
 				/>
-			) : type === FieldType.Checkbox ? (
+			) : type === FIELD_TYPES.Checkbox ? (
 				<input
 					type="checkbox"
 					name={field as string}
@@ -67,7 +67,7 @@ export function SidebarField<T>({
 					onChange={(e) => onChange(e.target.checked)}
 					onBlur={onBlur}
 				/>
-			) : type === FieldType.SingleSelect && options ? (
+			) : type === FIELD_TYPES.SingleSelect && options ? (
 				<CustomSelect
 					value={String(value ?? "")}
 					options={options}
