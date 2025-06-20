@@ -72,6 +72,7 @@ export const categorizeNestedField = (
 
 	if (innerType instanceof z.ZodDate) return FieldType.Date;
 	if (innerType instanceof z.ZodBoolean) return FieldType.Checkbox;
+	if (innerType instanceof z.ZodEnum) return FieldType.SingleSelect;
 	return FieldType.SingleLine;
 };
 
