@@ -1,6 +1,6 @@
 import React from "react";
 import { GenericRecord, zodFromFields } from "../../lib/types";
-import { categorizeNestedField } from "../../lib/fields";
+import { categorizeNestedField, getEnumOptions } from "../../lib/fields";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import _ from "lodash";
 import { z } from "zod";
@@ -210,6 +210,7 @@ export const SideForm = forwardRef(
 									onBlur={() => handleFieldBlur(field.field as string)}
 									error={validationErrors[field.field as keyof T]}
 									type={categorizeNestedField(field.field as string, zSchema)}
+									options={getEnumOptions(field.field as string, zSchema) || undefined}
 								/>
 							))}
 						</div>
