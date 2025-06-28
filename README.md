@@ -314,7 +314,6 @@ setLocale('es') // Default is 'en'
 
 TODO'S:
 - Improve installation experience by getting rid of the need to import css on root
-- Add useBuildTable hook
 - Add support for more fields types
 - Add support for custom fields
 - Add support for custom validation
