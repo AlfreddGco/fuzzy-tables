@@ -8,6 +8,7 @@ import {
 } from "fuzzy-tables";
 import { SingleSelectExample } from "./SingleSelectExample";
 
+
 // Define our schema and fields once and reuse for both Table and Forms
 const userFields = [
 	{

@@ -3,8 +3,20 @@ import { GenericRecord } from "../../lib/types";
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import _ from "lodash";
 import { SideForm, SideFormProps, SideFormRef } from "./BaseSideForm";
+import { LOCALES, SupportedLocale, useChosenLocale } from "../../stores/locale";
 
 export type CreateFormRef = { open: () => void };
+
+const DEFAULT_MESSAGES = {
+  [LOCALES.en]: {
+    add: 'Add',
+    save: 'Save',
+  },
+  [LOCALES.es]: {
+    add: 'Agregar',
+    save: 'Guardar',
+  }
+} as { [key in SupportedLocale]: { [key: string]: string } };
 
 type CreateFormProps<T> = {
 	fields: SideFormProps<T>["fields"];
@@ -25,7 +37,8 @@ export const CreateForm = forwardRef(
 		}: CreateFormProps<T>,
 		ref: React.ForwardedRef<CreateFormRef>,
 	) => {
-		const sidebarRef = useRef<SideFormRef<T>>(null);
+    const locale = useChosenLocale();
+  	const sidebarRef = useRef<SideFormRef<T>>(null);
 
 		useImperativeHandle(ref, () => ({
 			open: () => sidebarRef.current?.open(),
@@ -38,7 +51,7 @@ export const CreateForm = forwardRef(
 				title={title}
 				description={description}
 				onSubmit={onSubmit}
-				submitText="Agregar"
+				submitText={DEFAULT_MESSAGES[locale].add}
 				getErrorMessage={getErrorMessage}
 			/>
 		);
@@ -72,6 +85,7 @@ export const UpdateForm = forwardRef(
 		}: UpdateFormProps<T>,
 		ref: React.ForwardedRef<UpdateFormRef<T>>,
 	) => {
+    const locale = useChosenLocale();
 		const sidebarRef = useRef<SideFormRef<T>>(null);
 		const [editRecord, setEditRecord] = useState<(T & { id: string }) | null>(
 			null,
@@ -106,7 +120,7 @@ export const UpdateForm = forwardRef(
 				title={title}
 				description={description}
 				onSubmit={handleSubmit}
-				submitText="Guardar"
+				submitText={DEFAULT_MESSAGES[locale].save}
 				getErrorMessage={getErrorMessage}
 			/>
 		);

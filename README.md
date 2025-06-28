@@ -302,6 +302,14 @@ const App = () => {
 
 Do not loose typings on your forms! `formData` will be typed from `z.infer<typeof upsertSchema>`
 
+## Locale support
+We currently support English and Spanish locales for default messages on the forms and dates.
+```tsx
+// src/App.tsx
+import { setLocale } from "fuzzy-tables";
+setLocale('es') // Default is 'en'
+```
+
 #### Currently missing features
 
 TODO'S:

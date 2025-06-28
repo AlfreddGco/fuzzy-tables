@@ -2,6 +2,19 @@ import React, { useState, useRef, useEffect } from "react";
 import _ from "lodash";
 import { FIELD_TYPES } from "../../lib/fields";
 import { rainbow } from "../../lib/utils";
+import { LOCALES, useChosenLocale } from "../../stores/locale";
+import type { SupportedLocale } from "../../stores/locale";
+
+const DEFAULT_MESSAGES = {
+  [LOCALES.en as SupportedLocale]: {
+    required: 'This field is required',
+    requires_number: 'This field must be a number',
+  } as const,
+  [LOCALES.es as SupportedLocale]: {
+    required: 'Este campo es requerido',
+    requires_number: 'Este campo debe ser un número',
+  } as const,
+} as const;
 
 export function SidebarField<T>({
 	field,
@@ -22,7 +35,8 @@ export function SidebarField<T>({
 	type?: typeof FIELD_TYPES["SingleLine" | "Date" | "Checkbox" | "SingleSelect"];
 	options?: string[];
 }) {
-	const shouldShowError = error != null && error !== "";
+  const locale = useChosenLocale()
+  const shouldShowError = error != null && error !== "";
 	const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const [year, month, day] = e.target.value.split("-").map(Number);
 		const date = new Date(year, month - 1, day);
@@ -91,9 +105,9 @@ export function SidebarField<T>({
 			{shouldShowError && (
 				<p className="text-red-500 text-sm">
 					{error === "Required"
-						? "Este campo es requerido"
+						? DEFAULT_MESSAGES[locale].required
 						: error === "Expected number, received nan"
-							? "Este campo debe ser un número"
+							? DEFAULT_MESSAGES[locale].requires_number
 							: error}
 				</p>
 			)}

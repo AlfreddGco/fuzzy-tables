@@ -8,3 +8,5 @@ export {
 	type CreateFormRef,
 	type UpdateFormRef,
 } from "./components/Forms";
+export { setLocale } from "./stores/locale";
+export type { SupportedLocale } from "./stores/locale";
