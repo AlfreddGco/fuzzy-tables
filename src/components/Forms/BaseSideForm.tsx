@@ -8,7 +8,7 @@ import { SidebarField } from "./Field";
 
 export type SideFormRef<T> = {
 	open: () => void;
-	setField: (field: keyof T, value: string | Date) => void;
+	setField: <K extends keyof T>(field: K, value: T[K]) => void;
 };
 
 export type SideFormProps<T> = {
@@ -145,7 +145,7 @@ export const SideForm = forwardRef(
 				setGlobalError(null);
 				setValidationErrors({} as Record<keyof T, string | null>);
 			},
-			setField: (field: keyof T, value: string | Date) => {
+			setField: <K extends keyof T>(field: K, value: T[K]) => {
 				handleFieldChange(field as string, value);
 			},
 		}));

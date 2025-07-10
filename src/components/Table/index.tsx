@@ -105,6 +105,14 @@ const renderField = (
   				typeof value === "object" ? JSON.stringify(value) : String(value);
   			return stringValue.slice(0, 200);
   		}
+  		case FIELD_TYPES.File: {
+          return(
+            <span className="text-gray-400">
+              Auto rendering not supported for this field type.
+              Use &#96;render: (row) =&gt; React.Element&#96; for this column
+            </span>
+          )
+  		}
   		default: {
   			const _exhaustiveCheck: never = inferred;
   			throw new Error(`Unhandled field type: ${_exhaustiveCheck}`);
@@ -401,9 +409,9 @@ export const useBuildTable = (fields: Fields, handlers: string[] = []): Composed
 			return JSON.stringify(Object.keys(fields.shape));
 		}
 		return JSON.stringify(
-			fields.map(field => 
-				typeof field === 'string' 
-					? field 
+			fields.map(field =>
+				typeof field === 'string'
+					? field
 					: { field: field.field, header: field.header }
 			)
 		);
@@ -412,10 +420,10 @@ export const useBuildTable = (fields: Fields, handlers: string[] = []): Composed
 	const stableHandlers = JSON.stringify(handlers);
 
 	const [table, setTable] = useState(() => buildTable(fields, handlers));
-	
+
 	useEffect(() => {
 		setTable(buildTable(fields, handlers));
 	}, [stableFields, stableHandlers]);
-	
+
 	return table;
 };

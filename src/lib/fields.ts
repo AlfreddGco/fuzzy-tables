@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isFileSchema } from "./schemas/file";
 
 export const FIELD_TYPES = {
   SingleLine: 'SingleLine',
@@ -9,6 +10,7 @@ export const FIELD_TYPES = {
   ObjectArray: 'ObjectArray',
   Undefined: 'Undefined',
   Null: 'Null',
+  File: 'File',
 } as const
 
 export type FieldType = (typeof FIELD_TYPES)[keyof typeof FIELD_TYPES];
@@ -39,7 +41,7 @@ export const inferTypeFromValue = (value: unknown): FieldType => {
 export const categorizeNestedField = (
 	path: string,
 	zSchema: z.ZodType,
-): typeof FIELD_TYPES["SingleLine" | "Date" | "Checkbox" | "SingleSelect"] => {
+): typeof FIELD_TYPES["SingleLine" | "Date" | "Checkbox" | "SingleSelect" | "File"] => {
 	const getNestedType = (
 		type: z.ZodType | z.ZodRawShape,
 		parts: string[],
@@ -75,6 +77,7 @@ export const categorizeNestedField = (
 	if (innerType instanceof z.ZodDate) return FIELD_TYPES.Date;
 	if (innerType instanceof z.ZodBoolean) return FIELD_TYPES.Checkbox;
 	if (innerType instanceof z.ZodEnum) return FIELD_TYPES.SingleSelect;
+	if (isFileSchema(innerType)) return FIELD_TYPES.File;
 	return FIELD_TYPES.SingleLine;
 };
 
