@@ -265,7 +265,7 @@ Optional fields are supported. Adding `.optional()` to a field will not enforce 
 The `CreateForm` component is used to create new records. It takes a list of fields and a submit handler.
 
 ```tsx
-import { zodFromFields } from 'fuzzy-tables/types';
+import { zodFromFields } from 'fuzzy-tables/type-utils';
 import { z } from 'zod';
 
 // These same fields can be used to build a table!!!

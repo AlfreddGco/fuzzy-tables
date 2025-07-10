@@ -23,7 +23,7 @@ export default defineConfig([
 	},
 	// Types bundle without "use client"
 	{
-		entry: ["src/types.ts"],
+		entry: ["src/type-utils.ts"],
 		format: ["cjs", "esm"],
 		dts: true,
 		splitting: false,

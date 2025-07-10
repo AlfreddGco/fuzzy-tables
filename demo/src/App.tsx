@@ -6,7 +6,7 @@ import {
 	UpdateForm,
 	type UpdateFormRef,
 } from "fuzzy-tables";
-import { zodFromFields } from "fuzzy-tables/types";
+import { zodFromFields } from "fuzzy-tables/type-utils";
 import type React from "react";
 import { useCallback, useRef, useState } from "react";
 import { z } from "zod";

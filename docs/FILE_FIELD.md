@@ -39,7 +39,7 @@ const fields = [
 ### 3. Generate your schema and its type from fields
 ```typescript
 import { z } from "zod";
-import { zodFromFields } from "fuzzy-tables/types";
+import { zodFromFields } from "fuzzy-tables/type-utils";
 const schema = zodFromFields(fields);
 type Schema = z.infer<typeof schema>;
 ```
@@ -143,7 +143,7 @@ const fileRef = {
 ```typescript
 import { z } from 'zod';
 import { fileSchema, buildTable, CreateForm } from 'fuzzy-tables';
-import { zodFromFields } from "fuzzy-tables/types";
+import { zodFromFields } from "fuzzy-tables/type-utils";
 
 // Define your fields
 const userFields = [
