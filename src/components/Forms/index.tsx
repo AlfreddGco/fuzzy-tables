@@ -106,7 +106,7 @@ export const UpdateForm = forwardRef(
 					if (key !== "id") {
 						sidebarRef.current?.setField(
 							key as keyof T,
-							value as string | Date,
+							value as T[keyof T],
 						);
 					}
 				}
