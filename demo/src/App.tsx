@@ -7,7 +7,9 @@ import {
 	UpdateFormRef,
 } from "fuzzy-tables";
 import { SingleSelectExample } from "./SingleSelectExample";
-
+import { fileSchema } from "fuzzy-tables";
+import { z } from "zod";
+import { zodFromFields } from "fuzzy-tables/types";
 
 // Define our schema and fields once and reuse for both Table and Forms
 const userFields = [
@@ -81,7 +83,6 @@ const AdvancedTable = buildTable(
 	["Edit", "Delete"],
 );
 
-import { z } from "zod";
 const FromZodObject = buildTable(
 	z.object({
 		id: z.string(),
@@ -107,11 +108,66 @@ const UserTable = buildTable(
 	["edit"],
 );
 
+// File upload example fields
+const fileExampleFields = [
+	{
+		field: "name" as const,
+		header: "Name",
+		z: z.string().min(2, "Name must be at least 2 characters"),
+	},
+	{
+		field: "avatar" as const,
+		header: "Avatar",
+		z: fileSchema(),
+	},
+	{
+		field: "resume" as const,
+		header: "Resume",
+		z: fileSchema().optional(),
+	},
+];
+
+const fileExampleSchema = zodFromFields(fileExampleFields);
+type fileExampleType = z.infer<typeof fileExampleSchema>;
+
+// Sample data with file references
+const FILE_DEMO_DATA = [
+	{
+		id: "1",
+		name: "John Doe",
+		avatar: {
+		  key: "uploads/avatars/john.jpg",
+			upload_signature: "sig123",
+			url: "https://picsum.photos/200/200?random=3"
+		},
+		resume: {
+  		key: "uploads/resumes/john-doe.pdf",
+  		upload_signature: "sig456",
+  		url: "https://picsum.photos/200/200?random=4"
+		},
+	},
+];
+
+const FileTable = buildTable(fileExampleFields, ["edit"]);
+
+const readFileAsBase64 = async (file: File): Promise<string> => {
+	const reader = new FileReader();
+	await new Promise((resolve, reject) => {
+		reader.onload = resolve;
+		reader.onerror = reject;
+		reader.readAsDataURL(file);
+	});
+	return reader.result as string;
+};
+
 const TableDemo: React.FC = () => {
 	const [users, setUsers] = useState(DEMO_DATA);
-	const [activeTab, setActiveTab] = useState<"tables" | "singleSelect">("tables");
+  const [fileUsers, setFileUsers] = useState<(fileExampleType & { id: string })[]>(FILE_DEMO_DATA);
+	const [activeTab, setActiveTab] = useState<"tables" | "singleSelect" | "fileUpload">("tables");
 	const createFormRef = useRef<CreateFormRef>(null);
 	const updateFormRef = useRef<UpdateFormRef<(typeof DEMO_DATA)[0]>>(null);
+	const fileCreateFormRef = useRef<CreateFormRef>(null);
+	const fileUpdateFormRef = useRef<UpdateFormRef<fileExampleType>>(null);
 
 	// Handler for creating new users
 	const handleCreate = async (formData: (typeof DEMO_DATA)[0]) => {
@@ -136,6 +192,62 @@ const TableDemo: React.FC = () => {
 	}, []);
 	UserTable.useHandler("edit", editUserHandler);
 
+	// File upload handlers
+	const handleFileCreate = async (formData: any) => {
+		// In a real app, you would:
+		// 1. Get the File object from formData.avatar and formData.resume
+		// 2. Request a signed upload URL from your API
+		// 3. Upload the file to the signed URL
+		// 4. Get back the key and upload_signature
+		// 5. Submit the form with { key, upload_signature } instead of the File
+
+		// For demo purposes, we'll simulate this:
+		const newUser = {
+			id: Math.random().toString(36).substr(2, 9),
+			name: formData.name,
+			avatar: formData.avatar instanceof File
+				? { key: `uploads/avatars/${formData.avatar.name}`, upload_signature: `sig${Date.now()}` }
+				: formData.avatar,
+			resume: formData.resume instanceof File
+				? { key: `uploads/resumes/${formData.resume.name}`, upload_signature: `sig${Date.now()}` }
+				: formData.resume,
+		};
+		setFileUsers(prev => [...prev, newUser]);
+	};
+
+	const handleFileUpdate = async (id: string, formData: fileExampleType) => {
+		// Same process as create
+    let avatar = formData.avatar;
+    if(formData.avatar instanceof File){
+      avatar = {
+        key: `uploads/avatars/${formData.avatar.name}`,
+        upload_signature: `sig${Date.now()}`,
+        url: await readFileAsBase64(formData.avatar),
+      };
+    }
+    let resume = formData.resume;
+    if(formData.resume instanceof File){
+      resume = {
+        key: `uploads/resumes/${formData.resume.name}`,
+        upload_signature: `sig${Date.now()}`,
+        url: await readFileAsBase64(formData.resume),
+      };
+    }
+		setFileUsers(prev =>
+			prev.map(user => user.id === id ? {
+				...formData,
+				id,
+				avatar,
+				resume,
+			} : user)
+		);
+	};
+
+	const editFileUserHandler = useCallback((row: any) => {
+		fileUpdateFormRef.current?.openEditModal(row);
+	}, []);
+	FileTable.useHandler("edit", editFileUserHandler);
+
 	return (
 		<div className="flex flex-col p-8 gap-y-8">
 			{/* Tab navigation */}
@@ -159,6 +271,16 @@ const TableDemo: React.FC = () => {
 					}`}
 				>
 					Single Select Example
+				</button>
+				<button
+					onClick={() => setActiveTab("fileUpload")}
+					className={`px-4 py-2 font-medium transition-colors ${
+						activeTab === "fileUpload"
+							? "text-blue-600 border-b-2 border-blue-600"
+							: "text-gray-600 hover:text-gray-800"
+					}`}
+				>
+					File Upload Example
 				</button>
 			</div>
 
@@ -242,8 +364,67 @@ const TableDemo: React.FC = () => {
 						</ul>
 					</div>
 				</>
-			) : (
+			) : activeTab === "singleSelect" ? (
 				<SingleSelectExample />
+			) : (
+				<>
+					<div className="space-y-6">
+						<div className="flex justify-between items-center">
+							<div>
+								<h1 className="text-2xl font-bold">File Upload Example</h1>
+								<p className="text-gray-600 mt-2">
+									This example demonstrates file upload handling with validation
+								</p>
+							</div>
+							<button
+								onClick={() => fileCreateFormRef.current?.open()}
+								className="px-4 py-2 bg-blue-500 text-white rounded-sm hover:bg-blue-600 transition-colors duration-200"
+								type="button"
+							>
+								Add User with Files
+							</button>
+						</div>
+
+						<FileTable data={fileUsers} />
+
+						<CreateForm<fileExampleType>
+							ref={fileCreateFormRef}
+							fields={fileExampleFields}
+							onSubmit={handleFileCreate}
+							title="Add User with Files"
+							description="Upload avatar and resume files"
+						/>
+
+						<UpdateForm<fileExampleType>
+							ref={fileUpdateFormRef}
+							fields={fileExampleFields}
+							onSubmit={handleFileUpdate}
+							title="Edit User Files"
+							description="Update user files"
+						/>
+
+						<div className="mt-8 p-4 bg-gray-50 rounded-lg">
+							<h2 className="text-lg font-semibold mb-4">File Upload Flow:</h2>
+							<ol className="list-decimal list-inside space-y-2">
+								<li>User selects a file in the form (File instance on client)</li>
+								<li>On form submit, request a signed upload URL from your API</li>
+								<li>Upload the file to the signed URL (e.g., S3, GCS)</li>
+								<li>Receive back a key and upload_signature</li>
+								<li>Submit the form with {"{ key, upload_signature }"} to your API</li>
+								<li>Server validates with fileSchema() which accepts both formats</li>
+							</ol>
+							<div className="mt-4">
+								<p className="text-sm text-gray-600">
+									The file schema accepts three formats:
+								</p>
+								<ul className="list-disc list-inside mt-2 space-y-1 text-sm text-gray-600">
+									<li><strong>File instance:</strong> For form inputs (client-side)</li>
+									<li><strong>Reference object:</strong> {"{ key, upload_signature }"} for API storage</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</>
 			)}
 		</div>
 	);

@@ -255,6 +255,8 @@ These are the mappings for each zod object type:
 - `z.boolean()` -> Checkbox
 - `z.date()` -> Date input
 - `z.enum()` -> Single Select
+- `fileSchema()` -> Attachment
+- `fileSchema().optional()` -> Attachment
 
 Optional fields are supported. Adding `.optional()` to a field will not enforce the field to be filled.
 
@@ -268,9 +270,9 @@ import { z } from 'zod';
 
 // These same fields can be used to build a table!!!
 const tableFields = [
-  { field: 'name', header: 'Name', z: z.string() },
-  { field: 'email', header: 'Email', z: z.string().email() },
-  { field: 'status', header: 'Status', z: z.enum(['active', 'inactive']) },
+  { field: 'name' as const, header: 'Name', z: z.string() },
+  { field: 'email' as const, header: 'Email', z: z.string().email() },
+  { field: 'status' as const, header: 'Status', z: z.enum(['active', 'inactive']) },
 ]
 const upsertSchema = zodFromFields(tableFields);
 

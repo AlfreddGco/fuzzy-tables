@@ -10,3 +10,4 @@ export {
 } from "./components/Forms";
 export { setLocale } from "./stores/locale";
 export type { SupportedLocale } from "./stores/locale";
+export * from "./lib/schemas/file";

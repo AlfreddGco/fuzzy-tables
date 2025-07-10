@@ -4,6 +4,12 @@ import _ from "lodash";
 export type GenericRecord = { id?: string; [key: string]: unknown };
 export type TableRow = GenericRecord & { id: string };
 
+/**
+ * Extracts the output type from any Zod schema, including complex types
+ * like fileSchema() which returns a union of File | { key: string; upload_signature: string; url?: string }
+ */
+type ExtractZodOutput<T extends z.ZodType> = z.infer<T>;
+
 type ExtractZodType<T extends z.ZodType> = T extends z.ZodString
 	? string
 	: T extends z.ZodNumber
@@ -18,7 +24,9 @@ type ExtractZodType<T extends z.ZodType> = T extends z.ZodString
 						? ExtractZodType<U>
 						: T extends z.ZodNullable<infer U extends z.ZodType>
 							? ExtractZodType<U> | null
-							: never;
+							: T extends z.ZodOptional<infer U extends z.ZodType>
+								? ExtractZodType<U> | undefined
+								: ExtractZodOutput<T>;
 
 type NestedField<T extends { field: string; z: z.ZodType }> = T extends {
 	field: `${infer Parent}.${infer Child}`;

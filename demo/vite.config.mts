@@ -9,7 +9,7 @@ export default defineConfig({
 	},
 	resolve: {
 		alias: {
-			"fuzzy-tables": resolve(__dirname, "../dist"),
+			"fuzzy-tables": resolve(__dirname, "../src"),
 		},
 	},
 });
