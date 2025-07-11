@@ -1,7 +1,7 @@
 import "./index.css";
 import "./components/Table/specifics.scss";
 export { buildTable } from "./components/Table";
-export type { Field, Fields, ExtendedField, StringField } from "./components/Table";
+export type { Field, Fields } from "./components/Table";
 export {
 	CreateForm,
 	UpdateForm,

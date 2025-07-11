@@ -131,14 +131,6 @@ const renderField = (
 	}
 };
 
-export type StringField = string;
-export type ExtendedField = {
-  header: string;
-  field: string;
-  z?: z.ZodType;
-  render?: (row: TableRow) => React.ReactNode;
-};
-
 export type Field =
 	| string
 	| {
@@ -148,8 +140,8 @@ export type Field =
 			render?: (row: TableRow) => React.ReactNode;
 	  };
 
-// biome-ignore lint/suspicious/noExplicitAny: Required by zod
-export type Fields = StringField[] | ExtendedField[] | ZodObject<any, any>;
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+export type Fields = Field[] | ZodObject<any, any>;
 
 type FullDescriptionField = {
 	header: string;
