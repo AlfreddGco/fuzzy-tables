@@ -1,8 +1,25 @@
+import type { ZodObject } from "zod";
 import { z } from "zod";
-import _ from "lodash";
-
 export type GenericRecord = { id?: string; [key: string]: unknown };
 export type TableRow = GenericRecord & { id: string };
+
+export type StringField = string;
+export type ExtendedField = {
+	header: string;
+	field: string;
+	z?: z.ZodType;
+	render?: (row: TableRow) => React.ReactNode;
+} | {
+	readonly header: string;
+	readonly field: string;
+	readonly z?: z.ZodType;
+	readonly render?: (row: TableRow) => React.ReactNode;
+};
+
+export type Field = StringField | ExtendedField;
+
+// biome-ignore lint/suspicious/noExplicitAny: Required by zod
+export type Fields = StringField[] | ExtendedField[] | ZodObject<any, any>;
 
 /**
  * Extracts the output type from any Zod schema, including complex types

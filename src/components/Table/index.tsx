@@ -131,17 +131,8 @@ const renderField = (
 	}
 };
 
-export type Field =
-	| string
-	| {
-			header: string;
-			field: string;
-			z?: z.ZodType;
-			render?: (row: TableRow) => React.ReactNode;
-	  };
-
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-export type Fields = Field[] | ZodObject<any, any>;
+import type { Fields } from '../../lib/types'
+export type { Field, Fields } from '../../lib/types'
 
 type FullDescriptionField = {
 	header: string;

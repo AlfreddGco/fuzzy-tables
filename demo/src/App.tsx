@@ -18,27 +18,27 @@ const userFields = [
 		field: "name",
 		header: "Name",
 		z: z.string().min(2, "Name must be at least 2 characters"),
-	},
+	} as const,
 	{
 		field: "email",
 		header: "Email",
 		z: z.string().email("Invalid email address"),
-	},
+	} as const,
 	{
 		field: "status",
 		header: "Status",
 		z: z.enum(["active", "inactive"]),
-	},
+	} as const,
 	{
 		field: "lastLogin",
 		header: "Last Login",
 		z: z.date(),
-	},
+	} as const,
 	{
 		field: "isVerified",
 		header: "Verified",
 		z: z.boolean(),
-	},
+	} as const,
 ];
 
 // Sample data
