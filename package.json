@@ -1,6 +1,6 @@
 {
   "name": "fuzzy-tables",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "A modern React component library for fuzzy tables",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
