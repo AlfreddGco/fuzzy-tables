@@ -32,7 +32,7 @@ export const fileSchema = () => {
       upload_signature: z.string().min(1, "Upload signature is required"),
       // URL To render images when editing a record
       url: z.string().optional(),
-    }),
+    }).catchall(z.any()),
   ]);
 };
 
