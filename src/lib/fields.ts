@@ -41,7 +41,7 @@ export const inferTypeFromValue = (value: unknown): FieldType => {
 export const categorizeNestedField = (
 	path: string,
 	zSchema: z.ZodType,
-): typeof FIELD_TYPES["SingleLine" | "Date" | "Checkbox" | "SingleSelect" | "File"] => {
+): typeof FIELD_TYPES["SingleLine" | "Date" | "Checkbox" | "SingleSelect" | "File" | "MultipleSelect"] => {
 	const getNestedType = (
 		type: z.ZodType | z.ZodRawShape,
 		parts: string[],
@@ -77,6 +77,9 @@ export const categorizeNestedField = (
 	if (innerType instanceof z.ZodDate) return FIELD_TYPES.Date;
 	if (innerType instanceof z.ZodBoolean) return FIELD_TYPES.Checkbox;
 	if (innerType instanceof z.ZodEnum) return FIELD_TYPES.SingleSelect;
+	if (innerType instanceof z.ZodArray && innerType._def.type instanceof z.ZodEnum) {
+		return FIELD_TYPES.MultipleSelect;
+	}
 	if (isFileSchema(innerType)) return FIELD_TYPES.File;
 	return FIELD_TYPES.SingleLine;
 };
@@ -119,6 +122,9 @@ export const getEnumOptions = (
 
 	if (innerType instanceof z.ZodEnum) {
 		return innerType.options;
+	}
+	if (innerType instanceof z.ZodArray && innerType._def.type instanceof z.ZodEnum) {
+		return innerType._def.type.options;
 	}
 	return null;
 };

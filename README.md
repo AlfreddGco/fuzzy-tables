@@ -247,8 +247,9 @@ each field accordingly based on `fields` prop. Currently displaying fields are:
 - Text input
 - Date input
 - Checkbox
-
-Support for more fields will be released soon.
+- Single Select
+- Multiple Select
+- File Upload
 
 These are the mappings for each zod object type:
 
@@ -256,6 +257,7 @@ These are the mappings for each zod object type:
 - `z.boolean()` -> Checkbox
 - `z.date()` -> Date input
 - `z.enum()` -> Single Select
+- `z.array(z.enum())` -> Multiple Select
 - `fileSchema()` -> Attachment
 - `fileSchema().optional()` -> Attachment
 
