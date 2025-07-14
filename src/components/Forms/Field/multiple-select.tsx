@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { rainbow } from "../../../lib/utils";
 
 interface MultipleSelectProps {
