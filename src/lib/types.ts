@@ -80,7 +80,7 @@ type ZodFromFieldsResult<T extends { field: string; z: z.ZodType }[]> =
   MergeFields<UnionToIntersection<NestedField<T[number]>>>;
 
 export const zodFromFields = <
-  T extends { field: string; header: string; z: z.ZodType }[],
+  T extends { field: string; z: z.ZodType }[],
 >(
   fields: T,
 ) => {
