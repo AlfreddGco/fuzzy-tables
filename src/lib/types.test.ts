@@ -249,7 +249,7 @@ describe("zodFromFields", () => {
 	it("should handle the exact case mentioned: field 'MultipleSelect' with z.array(z.enum(['X', 'Y', 'Z']))", () => {
 		const fields = [
 			{
-				field: "MultipleSelect",
+				field: "MultipleSelect" as const,
 				z: z.array(z.enum(["X", "Y", "Z"])),
 			},
 		];
