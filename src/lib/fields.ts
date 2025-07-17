@@ -11,6 +11,7 @@ export const FIELD_TYPES = {
   Undefined: 'Undefined',
   Null: 'Null',
   File: 'File',
+  MultipleFiles: 'MultipleFiles',
 } as const
 
 export type FieldType = (typeof FIELD_TYPES)[keyof typeof FIELD_TYPES];
@@ -41,7 +42,7 @@ export const inferTypeFromValue = (value: unknown): FieldType => {
 export const categorizeNestedField = (
 	path: string,
 	zSchema: z.ZodType,
-): typeof FIELD_TYPES["SingleLine" | "Date" | "Checkbox" | "SingleSelect" | "File" | "MultipleSelect"] => {
+): typeof FIELD_TYPES["SingleLine" | "Date" | "Checkbox" | "SingleSelect" | "File" | "MultipleSelect" | "MultipleFiles"] => {
 	const getNestedType = (
 		type: z.ZodType | z.ZodRawShape,
 		parts: string[],
@@ -79,6 +80,9 @@ export const categorizeNestedField = (
 	if (innerType instanceof z.ZodEnum) return FIELD_TYPES.SingleSelect;
 	if (innerType instanceof z.ZodArray && innerType._def.type instanceof z.ZodEnum) {
 		return FIELD_TYPES.MultipleSelect;
+	}
+	if (innerType instanceof z.ZodArray && isFileSchema(innerType._def.type)) {
+		return FIELD_TYPES.MultipleFiles;
 	}
 	if (isFileSchema(innerType)) return FIELD_TYPES.File;
 	return FIELD_TYPES.SingleLine;

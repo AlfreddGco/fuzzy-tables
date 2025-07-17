@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { z } from "zod";
 import { categorizeNestedField, getEnumOptions, FIELD_TYPES } from "./fields";
+import { fileSchema } from "./schemas/file";
 
 describe("categorizeNestedField", () => {
   it("should categorize z.string() as SingleLine", () => {
@@ -46,6 +47,12 @@ describe("categorizeNestedField", () => {
     
     const result = categorizeNestedField("skills", schema);
     expect(result).toBe(FIELD_TYPES.MultipleSelect);
+  });
+
+  it("should categorize z.array(fileSchema()) as MultipleFiles", () => {
+    const schema = z.object({ documents: z.array(fileSchema()) });
+    const result = categorizeNestedField("documents", schema);
+    expect(result).toBe(FIELD_TYPES.MultipleFiles);
   });
 
   it("should categorize nested z.array(z.enum()) as MultipleSelect", () => {

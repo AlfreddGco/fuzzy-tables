@@ -113,6 +113,14 @@ const renderField = (
             </span>
           )
   		}
+  		case FIELD_TYPES.MultipleFiles: {
+        return(
+          <span className="text-gray-400">
+            Auto rendering not supported for this field type.
+            Use &#96;render: (row) =&gt; React.Element&#96; for this column
+          </span>
+        )
+      }
   		default: {
   			const _exhaustiveCheck: never = inferred;
   			throw new Error(`Unhandled field type: ${_exhaustiveCheck}`);

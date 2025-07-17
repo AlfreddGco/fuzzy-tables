@@ -125,6 +125,11 @@ const fileExampleFields = [
 		z: fileSchema(),
 	},
 	{
+		field: "documents" as const,
+		header: "Documents",
+		z: z.array(fileSchema()),
+	},
+	{
 		field: "resume" as const,
 		header: "Resume",
 		z: fileSchema().optional(),
@@ -144,6 +149,18 @@ const FILE_DEMO_DATA = [
 			upload_signature: "sig123",
 			url: "https://picsum.photos/200/200?random=3",
 		},
+		documents: [
+			{
+				key: "uploads/documents/john-contract.pdf",
+				upload_signature: "sig789",
+				url: "https://picsum.photos/200/200?random=5",
+			},
+			{
+				key: "uploads/documents/john-id.jpg",
+				upload_signature: "sig101",
+				url: "https://picsum.photos/200/200?random=6",
+			},
+		],
 		resume: {
 			key: "uploads/resumes/john-doe.pdf",
 			upload_signature: "sig456",
@@ -220,6 +237,16 @@ const TableDemo: React.FC = () => {
 							upload_signature: `sig${Date.now()}`,
 						}
 					: formData.avatar,
+			documents: Array.isArray(formData.documents)
+				? formData.documents.map((doc: any, index: number) =>
+						doc instanceof File
+							? {
+									key: `uploads/documents/${doc.name}`,
+									upload_signature: `sig${Date.now()}-${index}`,
+							  }
+							: doc
+				  )
+				: [],
 			resume:
 				formData.resume instanceof File
 					? {
@@ -241,6 +268,21 @@ const TableDemo: React.FC = () => {
 				url: await readFileAsBase64(formData.avatar),
 			};
 		}
+		let documents = formData.documents;
+		if (Array.isArray(formData.documents)) {
+			documents = await Promise.all(
+				formData.documents.map(async (doc: any, index: number) => {
+					if (doc instanceof File) {
+						return {
+							key: `uploads/documents/${doc.name}`,
+							upload_signature: `sig${Date.now()}-${index}`,
+							url: await readFileAsBase64(doc),
+						};
+					}
+					return doc;
+				})
+			);
+		}
 		let resume = formData.resume;
 		if (formData.resume instanceof File) {
 			resume = {
@@ -256,6 +298,7 @@ const TableDemo: React.FC = () => {
 							...formData,
 							id,
 							avatar,
+							documents,
 							resume,
 						}
 					: user,
@@ -411,7 +454,7 @@ const TableDemo: React.FC = () => {
 						<div>
 							<h1 className="text-2xl font-bold">File Upload Example</h1>
 							<p className="text-gray-600 mt-2">
-								This example demonstrates file upload handling with validation
+								This example demonstrates single and multiple file upload handling with validation
 							</p>
 						</div>
 						<button
@@ -430,7 +473,7 @@ const TableDemo: React.FC = () => {
 						fields={fileExampleFields}
 						onSubmit={handleFileCreate}
 						title="Add User with Files"
-						description="Upload avatar and resume files"
+						description="Upload avatar and multiple documents"
 					/>
 
 					<UpdateForm<fileExampleType>
