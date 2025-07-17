@@ -6,6 +6,7 @@ import type { SupportedLocale } from "../../../stores/locale";
 import { CustomSelect } from "./custom-select";
 import { FileInput } from "./file-input";
 import { MultipleSelect } from "./multiple-select";
+import { MultipleFilesInput } from "./multiple-files-input";
 
 const DEFAULT_MESSAGES = {
   [LOCALES.en as SupportedLocale]: {
@@ -34,7 +35,7 @@ export function SidebarField<T>({
 	onChange: (value: unknown) => void;
 	onBlur: () => void;
 	error?: string | null;
-	type?: typeof FIELD_TYPES["SingleLine" | "Date" | "Checkbox" | "SingleSelect" | "File" | "MultipleSelect"];
+	type?: typeof FIELD_TYPES["SingleLine" | "Date" | "Checkbox" | "SingleSelect" | "File" | "MultipleSelect" | "MultipleFiles"];
 	options?: string[];
 }) {
   const locale = useChosenLocale()
@@ -106,6 +107,14 @@ export function SidebarField<T>({
 					name={field as string}
 					value={value as string[] || []}
 					options={options}
+					onChange={onChange}
+					onBlur={onBlur}
+					error={shouldShowError}
+				/>
+			) : type === FIELD_TYPES.MultipleFiles ? (
+				<MultipleFilesInput
+					name={field as string}
+					value={value}
 					onChange={onChange}
 					onBlur={onBlur}
 					error={shouldShowError}

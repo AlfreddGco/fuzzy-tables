@@ -215,9 +215,6 @@ export const SideForm = forwardRef(
 							))}
 						</div>
 						<div className="py-6">
-							{globalError && (
-								<p className="text-red-500 mb-2">{globalError}</p>
-							)}
 							<button
 								type="button"
 								className="w-full py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600"
