@@ -1,5 +1,5 @@
+import React, { useEffect, useState } from "react";
 import { FileIcon, XIcon } from "lucide-react";
-import { useEffect, useState } from "react";
 import { fileSchema } from "src/lib/schemas/file";
 import type { z } from "zod";
 
