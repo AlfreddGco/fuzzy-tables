@@ -7,7 +7,7 @@ export {
 	UpdateForm,
 	type UpdateFormRef,
 } from "./components/Forms";
-export { buildTable } from "./components/Table";
+export { buildTable, useBuildTable } from "./components/Table";
 export * from "./lib/schemas/file";
 export type { ExtendedField, Field, Fields, StringField } from "./lib/types";
 export type { SupportedLocale } from "./stores/locale";
