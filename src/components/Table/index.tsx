@@ -10,7 +10,12 @@ import {
 	TableHandler,
 	RowErrorBoundary,
 } from "./specifics";
-import { FieldType, FIELD_TYPES, inferTypeFromValue, categorizeNestedField } from "../../lib/fields";
+import {
+	FieldType,
+	FIELD_TYPES,
+	inferTypeFromValue,
+	categorizeNestedField,
+} from "../../lib/fields";
 import { headerNameFromField, rainbow } from "../../lib/utils";
 import { TableRow } from "../../lib/types";
 
@@ -50,102 +55,105 @@ const renderField = (
 ): React.ReactNode => {
 	const value = _.get(row, field);
 	const renderInferredType = (inferred: FieldType) => {
-  	switch (inferred) {
-  		case FIELD_TYPES.Date: {
-  			const DATE_CONFIG: Intl.DateTimeFormatOptions = {
-  				day: "2-digit",
-  				month: "2-digit",
-  				year: "numeric",
-  			};
-  			return new Date(value as string).toLocaleDateString(
-  				"es-MX",
-  				DATE_CONFIG,
-  			);
-  		}
-  		case FIELD_TYPES.Undefined:
-  		case FIELD_TYPES.Null:
-  			return "-";
-  		case FIELD_TYPES.Checkbox:
-  			return value ? "✅" : "❌";
-  		case FIELD_TYPES.ObjectArray:
-  			return JSON.stringify(value);
-  		case FIELD_TYPES.SingleSelect:
-  			return (
-  				<span
-  					className="rounded-md px-2 py-0.5 text-sm"
-  					style={{
-  						backgroundColor:
-  							rainbow[String(value).length % rainbow.length].alpha(0.8),
-  						color: "white",
-  						fontWeight: "500",
-  					}}
-  				>
-  					{String(value)}
-  				</span>
-  			);
-  		case FIELD_TYPES.MultipleSelect: {
-  			const chips = value as string[];
-  			return chips.map((chip, idx) => (
-  				<span
-  					key={chip}
-  					className="rounded-md px-2 py-0.5 text-sm"
-  					style={{
-  						marginLeft: idx > 0 ? "0.25em" : 0,
-  						backgroundColor: rainbow[chip.length % rainbow.length].alpha(0.8),
-  						color: "white",
-  						fontWeight: "500",
-  					}}
-  				>
-  					{chip}
-  				</span>
-  			));
-  		}
-  		case FIELD_TYPES.SingleLine: {
-  			const stringValue =
-  				typeof value === "object" ? JSON.stringify(value) : String(value);
-  			return stringValue.slice(0, 200);
-  		}
-  		case FIELD_TYPES.File: {
-          return(
-            <span className="text-gray-400">
-              Auto rendering not supported for this field type.
-              Use &#96;render: (row) =&gt; React.Element&#96; for this column
-            </span>
-          )
-  		}
-  		case FIELD_TYPES.MultipleFiles: {
-        return(
-          <span className="text-gray-400">
-            Auto rendering not supported for this field type.
-            Use &#96;render: (row) =&gt; React.Element&#96; for this column
-          </span>
-        )
-      }
-  		default: {
-  			const _exhaustiveCheck: never = inferred;
-  			throw new Error(`Unhandled field type: ${_exhaustiveCheck}`);
-  		}
-  	}
-	}
+		switch (inferred) {
+			case FIELD_TYPES.Date: {
+				const DATE_CONFIG: Intl.DateTimeFormatOptions = {
+					day: "2-digit",
+					month: "2-digit",
+					year: "numeric",
+				};
+				return new Date(value as string).toLocaleDateString(
+					"es-MX",
+					DATE_CONFIG,
+				);
+			}
+			case FIELD_TYPES.Undefined:
+			case FIELD_TYPES.Null:
+				return "-";
+			case FIELD_TYPES.Checkbox:
+				return value ? "✅" : "❌";
+			case FIELD_TYPES.ObjectArray:
+				return JSON.stringify(value);
+			case FIELD_TYPES.SingleSelect:
+				return (
+					<span
+						className="rounded-md px-2 py-0.5 text-sm"
+						style={{
+							backgroundColor:
+								rainbow[String(value).length % rainbow.length].alpha(0.8),
+							color: "white",
+							fontWeight: "500",
+						}}
+					>
+						{String(value)}
+					</span>
+				);
+			case FIELD_TYPES.MultipleSelect: {
+				const chips = value as string[];
+				return chips.map((chip, idx) => (
+					<span
+						key={chip}
+						className="rounded-md px-2 py-0.5 text-sm"
+						style={{
+							marginLeft: idx > 0 ? "0.25em" : 0,
+							backgroundColor: rainbow[chip.length % rainbow.length].alpha(0.8),
+							color: "white",
+							fontWeight: "500",
+						}}
+					>
+						{chip}
+					</span>
+				));
+			}
+			case FIELD_TYPES.SingleLine: {
+				const stringValue =
+					typeof value === "object" ? JSON.stringify(value) : String(value);
+				return stringValue.slice(0, 200);
+			}
+			case FIELD_TYPES.File: {
+				return (
+					<span className="text-gray-400">
+						Auto rendering not supported for this field type. Use &#96;render:
+						(row) =&gt; React.Element&#96; for this column
+					</span>
+				);
+			}
+			case FIELD_TYPES.MultipleFiles: {
+				return (
+					<span className="text-gray-400">
+						Auto rendering not supported for this field type. Use &#96;render:
+						(row) =&gt; React.Element&#96; for this column
+					</span>
+				);
+			}
+			default: {
+				const _exhaustiveCheck: never = inferred;
+				throw new Error(`Unhandled field type: ${_exhaustiveCheck}`);
+			}
+		}
+	};
 	if (!type) {
 		const inferredType = inferTypeFromValue(value);
 		return renderInferredType(inferredType);
-	} else if(type in FIELD_TYPES) {
-    return renderInferredType(FIELD_TYPES[type as keyof typeof FIELD_TYPES]);
+	} else if (value === undefined) {
+		return "-";
+	} else if (type in FIELD_TYPES) {
+		return renderInferredType(FIELD_TYPES[type as keyof typeof FIELD_TYPES]);
 	} else {
-  	const stringValue =
+		const stringValue =
 			typeof value === "object" ? JSON.stringify(value) : String(value);
 		return stringValue.slice(0, 200);
 	}
 };
 
-import type { Fields } from '../../lib/types'
-export type { Field, Fields } from '../../lib/types'
+import type { Fields } from "../../lib/types";
+export type { Field, Fields } from "../../lib/types";
 
 type FullDescriptionField = {
 	header: string;
 	field: string;
 	render: (row: TableRow) => React.ReactNode;
+	type?: FieldType;
 };
 
 export const buildTable = (
@@ -202,8 +210,10 @@ export const buildTable = (
 				}
 				return {
 					...field,
+					type,
 					render:
-						field.render || ((row: TableRow) => renderField(row, field.field, type)),
+						field.render ||
+						((row: TableRow) => renderField(row, field.field, type)),
 				};
 			});
 		}
@@ -357,11 +367,12 @@ export const buildTable = (
 										onChange={() => toggleRowSelection(row.id)}
 									/>
 								</td>
-								{fieldsArray.map(({ field, render }) => (
+								{fieldsArray.map(({ field, render, type }) => (
 									<td
 										key={field}
 										className="py-3 px-2"
-										data-type={inferTypeFromValue(row[field])}
+										data-type={type || inferTypeFromValue(row[field])}
+										data-inferred={!type}
 									>
 										{render(row)}
 									</td>
@@ -402,17 +413,20 @@ export const buildTable = (
 	return ComposedTable;
 };
 
-export const useBuildTable = (fields: Fields, handlers: string[] = []): ComposedTableComponent => {
+export const useBuildTable = (
+	fields: Fields,
+	handlers: string[] = [],
+): ComposedTableComponent => {
 	const stableFields = (() => {
 		if (fields instanceof ZodObject) {
 			return JSON.stringify(Object.keys(fields.shape));
 		}
 		return JSON.stringify(
-			fields.map(field =>
-				typeof field === 'string'
+			fields.map((field) =>
+				typeof field === "string"
 					? field
-					: { field: field.field, header: field.header }
-			)
+					: { field: field.field, header: field.header },
+			),
 		);
 	})();
 
