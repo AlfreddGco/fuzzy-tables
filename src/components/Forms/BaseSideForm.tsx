@@ -231,4 +231,4 @@ export const SideForm = forwardRef(
 	},
 ) as <T extends GenericRecord>(
 	props: SideFormProps<T> & { ref: React.ForwardedRef<SideFormRef<T>> },
-) => JSX.Element;
+) => React.JSX.Element;

@@ -60,7 +60,7 @@ export const CreateForm = forwardRef(
 	props: CreateFormProps<T> & {
 		ref?: React.ForwardedRef<CreateFormRef>;
 	},
-) => JSX.Element;
+) => React.JSX.Element;
 
 export type UpdateFormRef<T> = {
 	openEditModal: (editRecord: T & { id: string }) => void;
@@ -129,4 +129,4 @@ export const UpdateForm = forwardRef(
 	props: UpdateFormProps<T> & {
 		ref?: React.ForwardedRef<UpdateFormRef<T>>;
 	},
-) => JSX.Element;
+) => React.JSX.Element;
