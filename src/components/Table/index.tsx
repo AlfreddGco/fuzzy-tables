@@ -341,6 +341,8 @@ export const buildTable = (
 							<tr
 								key={row.id}
 								onClick={(e) => {
+									// Selecting text to copy it must not act on the row.
+									if (window.getSelection()?.toString()) return;
 									// If not clicking the checkbox
 									const clickingCheckbox = e.target instanceof HTMLInputElement;
 									if (!clickingCheckbox) {
