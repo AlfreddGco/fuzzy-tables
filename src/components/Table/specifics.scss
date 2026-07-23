@@ -1,7 +1,7 @@
 .fuzzy-table {
   border-collapse: separate;
   border-spacing: 0;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--ft-border, #e5e7eb);
   border-top: 0;
   font-size: 0.85em;
 
@@ -9,17 +9,17 @@
     position: sticky;
     top: 0;
     z-index: 1;
-    background-color: white;
+    background-color: var(--ft-surface, white);
   }
 
   th {
-    background-color: white;
-    border-top: 1px solid #e5e7eb;
-    border-bottom: 1px solid #e5e7eb;
+    background-color: var(--ft-surface, white);
+    border-top: 1px solid var(--ft-border, #e5e7eb);
+    border-bottom: 1px solid var(--ft-border, #e5e7eb);
   }
 
   th:not(:last-child), td:not(:last-child) {
-    border-right: 1px solid #e5e7eb;
+    border-right: 1px solid var(--ft-border, #e5e7eb);
   }
 
   th:not(:first-child):not(:last-child) {
@@ -27,7 +27,7 @@
   }
 
   tr:not(:first-child) > td{
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid var(--ft-border, #e5e7eb);
   }
 
   tr{
@@ -38,7 +38,7 @@
   }
 
   tr:hover{
-    background-color: hsla(240, 5%, 96%, 0.5);
+    background-color: var(--ft-hover, hsla(240, 5%, 96%, 0.5));
   }
 
   td{

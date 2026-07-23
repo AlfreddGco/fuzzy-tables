@@ -89,7 +89,7 @@ export const TableHandler: React.FC<TableHandlerProps> = ({
 			<DropdownMenuTrigger asChild className="w-full h-full">
 				<button
 					onClick={(e: React.MouseEvent) => e.stopPropagation()}
-					className="p-1 hover:bg-gray-100 bg-white"
+					className="p-1 hover:bg-[var(--ft-muted-surface,#f3f4f6)] bg-[var(--ft-surface,white)]"
 					type="button"
 				>
 					<DotsHorizontalIcon />

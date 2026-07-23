@@ -112,7 +112,7 @@ const renderField = (
 			}
 			case FIELD_TYPES.File: {
 				return (
-					<span className="text-gray-400">
+					<span className="text-[var(--ft-muted-text,#9ca3af)]">
 						Auto rendering not supported for this field type. Use &#96;render:
 						(row) =&gt; React.Element&#96; for this column
 					</span>
@@ -120,7 +120,7 @@ const renderField = (
 			}
 			case FIELD_TYPES.MultipleFiles: {
 				return (
-					<span className="text-gray-400">
+					<span className="text-[var(--ft-muted-text,#9ca3af)]">
 						Auto rendering not supported for this field type. Use &#96;render:
 						(row) =&gt; React.Element&#96; for this column
 					</span>
