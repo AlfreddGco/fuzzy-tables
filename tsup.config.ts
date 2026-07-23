@@ -10,7 +10,10 @@ export default defineConfig([
 		sourcemap: true,
 		clean: true,
 		external: ["react", "react-dom"],
-		injectStyle: true,
+		// Emit CSS as a file (dist/index.css → the ./styles.css export) instead
+		// of injecting it at runtime — injected styles are unlayered and would
+		// override a host's cascade-layered Tailwind.
+		injectStyle: false,
 		esbuildOptions(options) {
 			options.banner = {
 				js: '"use client";',
