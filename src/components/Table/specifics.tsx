@@ -37,7 +37,7 @@ export const TableHeader: React.FC<TableHeaderProps> = ({
 	return (
 		<th
 			key={field}
-			className="p-2 text-left text-[rgba(0,0,0,0.5)]"
+			className="p-2 text-left text-[var(--ft-header-text,rgba(0,0,0,0.5))]"
 			onClick={() => toggleSortingField(field)}
 			onKeyDown={(e) => {
 				if (e.key === "Enter") {
