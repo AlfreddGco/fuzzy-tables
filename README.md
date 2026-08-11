@@ -10,10 +10,49 @@ npm install fuzzy-tables
 yarn add fuzzy-tables
 ```
 
-After installing the package you just need to add the styles on the root layout of your project:
+After installing the package, add the stylesheet to your root layout:
 
 ```tsx
 import "fuzzy-tables/styles.css";
+```
+
+That file carries the table chrome — borders, sticky header, row hover. The layout of
+the components themselves (padding, sizing, flex) comes from Tailwind utility classes,
+which your own Tailwind build has to generate. Point it at the package:
+
+```js
+// tailwind.config.js — Tailwind v3
+content: ["./src/**/*.{ts,tsx}", "./node_modules/fuzzy-tables/dist/index.mjs"],
+```
+
+```css
+/* your CSS entry — Tailwind v4 */
+@source "../node_modules/fuzzy-tables/dist/index.mjs";
+```
+
+Without that entry the table keeps its borders and sticky header but loses its layout,
+and nothing reports an error. This package expects Tailwind in the consuming app.
+
+## Theming
+
+The chrome reads six CSS custom properties. Leave them unset for the defaults below, or
+set them to follow your own design system — dark mode included, since the table takes
+whatever the variables resolve to.
+
+| Token | Default | Controls |
+| --- | --- | --- |
+| `--ft-surface` | `white` | header and dropdown background |
+| `--ft-muted-surface` | `#f3f4f6` | dropdown item and button hover |
+| `--ft-muted-text` | `#9ca3af` | field-type notices |
+| `--ft-header-text` | `rgba(0,0,0,0.5)` | column header labels |
+| `--ft-border` | `#e5e7eb` | table borders |
+| `--ft-hover` | `hsla(240, 5%, 96%, 0.5)` | row hover |
+
+```css
+:root {
+  --ft-surface: var(--card);
+  --ft-border: var(--border);
+}
 ```
 
 ## Basic Usage
